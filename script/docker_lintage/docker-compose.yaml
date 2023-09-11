@@ -1,0 +1,30 @@
+version: '3'
+services:
+  format_test:
+    build:
+      context: ../..
+      dockerfile: script/docker_lintage/Dockerfile
+    container_name: code_test
+    command:
+      make test_static_all
+  unit:
+    build:
+      context: ../..
+      dockerfile: script/docker_lintage/Dockerfile
+    container_name: unittests
+    command:
+      make test_unit_coverage
+  complexity:
+    build:
+      context: ../..
+      dockerfile: script/docker_lintage/Dockerfile
+    container_name: complexity
+    command:
+      make test_complexity
+  documentation:
+    build:
+      context: ../..
+      dockerfile: script/docker_lintage/Dockerfile
+    container_name: documentation
+    command:
+      make test_documentation
