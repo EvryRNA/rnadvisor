@@ -24,7 +24,9 @@ docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/config.yaml:/ap
 ```
 
 The `-v ${PWD}/docker_data/:/app/docker_data` sets a volume that is mapped to the local `docker_data` folder. 
+
 The `-v ${PWD}/config.yaml:/app/config.yaml` sets a volume that is mapped to the local `config.yaml` file.
+
 The `--config_path=./config.yaml` is an argument that is passed to the CLI code.
 
 ## Run the script
