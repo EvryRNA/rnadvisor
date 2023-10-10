@@ -43,22 +43,17 @@ all_tests: test_static_all test_complexity test_documentation test_unit_coverage
 
 .PHONY: compute_scores
 compute_scores:
-	$(PYTHON) src.score_cli --config_path=./config.yaml
+	$(PYTHON) src.rnadvisor_cli --config_path=./config.yaml
 
 .PHONY: docker_start
 docker_start:
 	docker build -t rna_scores --target release .
-	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_scores --config_path=./config.yaml
+	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rna_scores --config_path=./config.yaml
 
 .PHONY: docker_interactive
 docker_interactive:
 	docker build -t rna_scores_dev --target dev .
-	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_scores_dev
-
-docker_debug:
-	docker build -t rna_scores_dev --target dev .
-	#docker run -it -v ${PWD}/:/app/ rna_scores_dev
-	docker run -it rna_scores_dev
+	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rna_scores_dev
 
 .PHONY: clean
 clean:

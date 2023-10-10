@@ -48,7 +48,7 @@ class ScoreAbstract:
                         scores[sub_path] = {score_n: score}
                         times[sub_path] = {score_n: c_times[score_n]}
             else:
-                logger.debug(f"FILE {sub_path} EITHER DOESN'T EXIST OR ISN'T A .pdb FILE")
+                logger.warning(f"FILE {sub_path} EITHER DOESN'T EXIST OR ISN'T A .pdb FILE")
         return scores, times
 
     @staticmethod

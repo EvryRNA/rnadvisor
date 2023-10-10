@@ -1,6 +1,6 @@
 
 <h1 align="center">
-  3D RNA Scoring
+  RNAdvisor: RNA 3D structure metrics and energies assessment
 </h1>
 
 
@@ -183,7 +183,7 @@ To launch it, use:
 ```
 make docker_interactive
 ```
-It will run the container and launch the `/bin/bash` command. You would then need to run `python -m src.score_cli` with the needed parameters if you want to run the code.
+It will run the container and launch the `/bin/bash` command. You would then need to run `python -m src.rnadvisor_cli` with the needed parameters if you want to run the code.
 
 If you want to manually build and run the docker, you can see the details in the `Makefile`.
 
@@ -192,7 +192,7 @@ Note that the `Dockerfile` contains multiple stage (one stage for each repo), so
 docker build -t rna_scores --target release .
 ```
 
-Then, as the entrypoint in the `Dockerfile` is `python -m src.score_cli`, you just need to provide the arguments for the commands in the running process:
+Then, as the entrypoint in the `Dockerfile` is `python -m src.rnadvisor_cli`, you just need to provide the arguments for the commands in the running process:
 ```
 docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_scores --config_path=./config.yaml
 ```
@@ -232,8 +232,10 @@ SCORE_HP:
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
   RESULT_PATH: "docker_data/output/test_scores.csv"
   TIME_PATH: "docker_data/output/time_score.csv"
+  LOG_PATH: "docker_data/log/out.log"
   NORMALISATION: true
   SORT_BY: RMSD
+  VERBOSE: false
   ALL_SCORES:
     - RMSD
     - P-VALUE
@@ -256,6 +258,8 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `NATIVE_PATH`: the path to the `.pdb` native structure
 - `RESULT_PATH`: the path where to store the output (a `.csv` file)
 - `TIME_PATH`: the path where to store the time of each metric (a `.csv` file)
+- `LOG_PATH`: the path where to store the log of the script (a `.log` file)
+- `VERBOSE`: whether to print the debug logs in the console
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
 - `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE` and `CAD`. Note that the `GDT-TS` is computed with the `TM-SCORE`.
@@ -264,8 +268,8 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 
 If you want to use the command lines, here are the option available to run the script : 
 ```
-python -m src.score_cli --pred_path --native_path --result_path --time_path
-          [--all_scores] [--config_path]
+python -m src.rnadvisor_cli --pred_path --native_path --result_path --time_path --log_path
+          [--all_scores] [--config_path] [--no_normalisation] [--sort_by] [--verbose]
 ```
 with: 
 ```
@@ -274,7 +278,12 @@ arguments:
   --native_path         Path to a .pdb file of the native structure.
   --result_path         Path to a directory where to store the different scores.
   --time_path           Path to a directory where to store the time of each metric.
-  --all_scores          List of the scores to use, separated by a comma. If you want to use them all, use ALL. Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD. 
+  --log_path            Path to a directory where to store the log of the script.
+  --verbose             If the user wants to print the debug logs in the console.
+  --all_scores          List of the scores to use, separated by a comma. 
+                        If you want to use them all, use `ALL`. To use all the metrics, use `METRICS`
+                        To use all the energies, use `ENERGIES`.
+                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,RASP,CLASH,BARNABA,DFIRE,rsRNASP.
   --no-normalisation    If the user doesn't want to normalise the .pdb files. 
   --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,RASP,BARNABA,DFIRE,rsRNASP.
   --config_path         Path to the config.yaml file with the different parameters.
@@ -286,7 +295,7 @@ If you use the `config_path`, it will not take into account the other parameters
 An example of use would be: 
 
 ```
-python -m src.score_cli --pred_path=docker_data/input/MODEL_1 --native_path=docker_data/input/NATIVE/1Z43.pdb --result_path=docker_data/output/ --time_path=docker_data/output/time.csv --all_scores=ALL
+python -m src.rnadvisor_cli --pred_path=docker_data/input/MODEL_1 --native_path=docker_data/input/NATIVE/1Z43.pdb --result_path=docker_data/output/ --time_path=docker_data/output/time.csv --all_scores=ALL
 ```
 
 ## References
