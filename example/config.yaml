@@ -1,0 +1,10 @@
+SCORE_HP:
+  PRED_PATH: "docker_data/input/preds"
+  NATIVE_PATH: "docker_data/input/native/rp03.pdb"
+  RESULT_PATH: "docker_data/output/rp01.csv"
+  TIME_PATH: "docker_data/output/rp03.csv"
+  LOG_PATH: "docker_data/logs/out.log"
+  NORMALISATION: true
+  VERBOSE: false
+  ALL_SCORES: ALL
+  SORT_BY: RMSD
