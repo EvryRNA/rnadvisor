@@ -40,3 +40,5 @@ To run the script with the example, use the following command:
 It should return a file `docker_data/output/rp03.csv` with the different predictions. 
 
 A `docker_data/logs` folder is also created with the different logs.
+
+A computation time is also displayed in the `docker_data/output/time_rp03.csv`.
