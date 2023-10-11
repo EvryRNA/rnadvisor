@@ -1,26 +1,20 @@
-BIN_PATHS:
-  # Bin paths: nothing to change if you follow the installation instructions
-  RNA_ASSESSMENT: "lib/rna_assessment/MC-Annotate"
-  ZHANG_GROUP: "lib/zhanggroup/TMscore"
-  DFIRE: "lib/dfire/bin/DFIRE_RNA"
-  MCQ4STRUCTURES: "lib/mcq4structures/mcq-cli/mcq-local"
-  RASP: "lib/rasp/bin/rasp_fd"
-  rsRNASP: "lib/rs_rnasp/rsRNASP"
 SCORE_HP:
-  PRED_PATH: "docker_data/input/RNA_PUZZLES/PREDS/rp01"
-  NATIVE_PATH: "docker_data/input/RNA_PUZZLES/NATIVE/rp01.pdb"
-  RESULT_PATH: "docker_data/output/RNA_PUZZLES/rp01.csv"
-  TIME_PATH: "docker_data/output/RNA_PUZZLES/rp01_time.csv"
+  PRED_PATH: "docker_data/input/example/PREDS/rp01"
+  NATIVE_PATH: "docker_data/input/example/NATIVE/rp01.pdb"
+  RESULT_PATH: "docker_data/output/example/rp01.csv"
+  TIME_PATH: "docker_data/output/example/rp01_time.csv"
+  LOG_PATH: "docker_data/logs/out.log"
   NORMALISATION: true
-  ALL_SCORES: ALL
-#    - RMSD
-#    - P-VALUE
-#    - INF
-#    - DI
-#    - MCQ
-#    - TM-SCORE
-#    - CAD
-#    - RASP
-#    - CLASH
-#    - BARNABA
+  VERBOSE: false
+  ALL_SCORES:
+    - RMSD
+    - P-VALUE
+    - INF
+    - DI
+    - MCQ
+    - TM-SCORE
+    - CAD
+    - RASP
+    - CLASH
+    - BARNABA
   SORT_BY: RMSD

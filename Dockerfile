@@ -87,7 +87,7 @@ RUN make install_barnaba
 RUN echo "" > lib/__init__.py
 # Copy the needed files
 COPY . .
-ENTRYPOINT ["python", "-m", "src.score_cli"]
+ENTRYPOINT ["python", "-m", "src.rnadvisor_cli"]
 
 FROM release as dev
 RUN apt-get install -y bc vim

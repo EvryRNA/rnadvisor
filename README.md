@@ -1,15 +1,13 @@
 
 <h1 align="center">
-  3D RNA Scoring
+  RNAdvisor: RNA 3D structure metrics and energies assessment
 </h1>
 
 
-![img](img/scoring_rna.drawio_transparent.png)
+![img](img/rnadvisor_schema.png)
 
 
 This depo summarises different implementations of scoring function for 3D structures of RNA
-
-
 
 ## General overview
 
@@ -34,136 +32,6 @@ It uses the following repositories:
 
 Note that all these repositories are implementing a lot of different functions. For the sake of this project, I just took what seemed to be the most relevant for the scoring of 3D structures. 
 
-## Description 
-Here is a basic explication of the different scores, such as the original papers. 
-### General metrics 
-
-There are two metrics that aim to give a general idea of how well two 3D structures are compare to each other. 
-#### RMSD 
-The RMSD is described as the Root-mean-square deviation of two molecules. 
-
-It usually uses some rotation to have a representative value of RMSD.
-
-There are multiple repositories that implement this metrics, such as: 
-- [rmsd](https://github.com/charnley/rmsd)
-- [RNA_Assessment](https://github.com/RNA-Puzzles/RNA_assessment)
-- [RNA-tools](https://github.com/mmagnus/rna-tools)
-
-
-#### CLASH 
-
-This is described as the number of bad overlaps per 1000 atoms. 
-
-This is based on [[Davis and all]](#1) paper. 
-
-I didn't succeed in implementing this score. I didn't manage integrating them to my code. Here is a list of repositories that seem to implement this score: 
-
-- [MolProbity](https://github.com/rlabduke/MolProbity): original paper implementation.
-- [RNA-tools](https://github.com/mmagnus/rna-tools): it depends on [Phenix](https://phenix-online.org/), which is not open-source. See the [documentation](https://rna-tools.readthedocs.io/en/latest/tools.html?highlight=clash#module-rna_tools.tools.mq.ClashScore.ClashScore).
-- [rnaqa](https://github.com/mantczak/rnaqua): a java tool similar to this repo that implements different scores.
-
-### RNA-oriented metrics 
-
-Compared to general metrics, scoring methods have been developed to take into account the locality of RNA specificities. 
-
-#### P-VALUE 
-
-The P-value aims to assess the global fold of an RNA at roughly “nucleotide resolution”. This is based on the [RMSD](#rmsd). 
-
-Note that this metric is relevant for structures between 35 and 161 nucleotides, as mentioned in the original paper [[2]](#2).
-
-#### INF 
-
-This INF (Interaction Network Fidelity) metric was invented to assess the central characteristics of RNA architecture. 
-This is the Matthews correlation coefficient of interaction prediction.
-
-```math
-INF = \sqrt{\frac{TP}{TP+FP} \times \frac{TP}{TP+FN}}
-```
-
-The INF can either measure different interaction types (WC base-pairing, non-WC base pairing, base stacking) separately or combine all of the types (resulting in INFwc, INFnwc, INFstacking and INFall)
-
-It is based on the paper [[3]](#3).
-
-
-#### DI 
-
-The DI (Deformation Index) metric is defined to balance the RMSD by a local value.
-
-This is defined as: 
-
-```math
-DI = \frac{RMSD}{INF}
-```
-This paper [[3]](#3) mentioned this metric such as the Deformation Profile (DP), which is a distance matrix representing the average distance between a predicted model and a reference model. 
-
-
-#### MCQ 
-
-The MCQ score (Mean of Circular Quantities) gives a comparison in torsion angle space. Indeed, it assumes that small deviation in angle may result in topological deviation.
-
-The mathematical definition is quite complex, defined as: 
-```math
-MCQ(S_T, S'_T) = arctan( \frac{1}{r|T|} \sum_{i=1}^r \sum_{j=1}^{|T|} sin \Delta (t_{ij} , t'_{ij})       ,  \frac{1}{r|T|} \sum_{i=1}^r \sum_{j=1}^{|T|} cos \Delta (t_{ij} , t'_{ij})          )
-```
-where $r$ is a number of residues in $S \cap S'$ and $T$ a set of torsion angles. 
-We also have: 
-
-```math
-\Delta(t, t') = \left\{
-        \begin{array}{lll}
-             0  \qquad \qquad \qquad \qquad \qquad \qquad \qquad   \text{if both t and t' are undefined } \\ 
-            \pi  \qquad \qquad \qquad \qquad \qquad \qquad \qquad \text{if either t or t' is undefined}  \\
-            min(\text{diff}(t, t'), 2\pi - \text{diff}(t, t'))) \quad  \text{otherwise} 
-        \end{array}
-    \right. 
-```
-
-
-The original source code is the [MCQ4Structures](https://github.com/tzok/mcq4structures), adapted from [[4]](#4).
-
-
-### Protein-based metrics
-
-Even if RNA and proteins are different, some metric functions from proteins can be adapted to RNA. 
-
-### CAD-score
-
-The CAD score (Contact Area Difference) aims to measure the structural similarity in a contact-area difference-based function. 
-
-It has been described for proteins [[6]](#6), and then adapted for RNA [[7]](#7).
-
-If we denote the contact area between residues `i` and `j` in the reference structure as $T_{(i,j)}$, and the contact area in the predicted model as $M_{(i,j)}$, the $CAD_{score}$ is defined as: 
-
-```math
-
-CAD_{score} = 1-\frac{  \sum_{(i,j) \in G}  min( |T_{(i,j)} - M_{(i,j)}  ,  T_{(i,j)})         }{ \sum_{(i,j) \in G} T_{(i,j)} }
-
-```
-
-
-
-#### TM-score
-The TM-score (Template-Modeling) aims to give a metric that isn't dependent of the length of the structures.
-
-This is adapted to RNA in [[5]](#5), where the TM-score is defined as: 
-
-```math
-
-TM_{score_{RNA}} = \frac{1}{L}\sum_{i=1}^{L_{ali}} \frac{1}{1 + (\frac{d_i}{d_0})^2}
-
-```
-with $d_0 = 0.6 \sqrt{L-0.5} - 2.5$ the scaling factor to ensure the score of random RNA pairs is independent of RNA length.
-
-
-
-### GDT-TS
-
-The GDT-TS score (Global Distance Test Total Score) denote the sum of percent of residues that are within 1,2,4 and 8Å between a model and a reference structure, divided by 4.
-
-This is a value that varies between 0 and 1, inspired by the protein metrics.
-
-It has been adapted from the CASP competition [[8]](#8).
 
 ## Installation
 
@@ -183,7 +51,7 @@ To launch it, use:
 ```
 make docker_interactive
 ```
-It will run the container and launch the `/bin/bash` command. You would then need to run `python -m src.score_cli` with the needed parameters if you want to run the code.
+It will run the container and launch the `/bin/bash` command. You would then need to run `python -m src.rnadvisor_cli` with the needed parameters if you want to run the code.
 
 If you want to manually build and run the docker, you can see the details in the `Makefile`.
 
@@ -192,7 +60,7 @@ Note that the `Dockerfile` contains multiple stage (one stage for each repo), so
 docker build -t rna_scores --target release .
 ```
 
-Then, as the entrypoint in the `Dockerfile` is `python -m src.score_cli`, you just need to provide the arguments for the commands in the running process:
+Then, as the entrypoint in the `Dockerfile` is `python -m src.rnadvisor_cli`, you just need to provide the arguments for the commands in the running process:
 ```
 docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_scores --config_path=./config.yaml
 ```
@@ -232,8 +100,10 @@ SCORE_HP:
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
   RESULT_PATH: "docker_data/output/test_scores.csv"
   TIME_PATH: "docker_data/output/time_score.csv"
+  LOG_PATH: "docker_data/log/out.log"
   NORMALISATION: true
   SORT_BY: RMSD
+  VERBOSE: false
   ALL_SCORES:
     - RMSD
     - P-VALUE
@@ -256,6 +126,8 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `NATIVE_PATH`: the path to the `.pdb` native structure
 - `RESULT_PATH`: the path where to store the output (a `.csv` file)
 - `TIME_PATH`: the path where to store the time of each metric (a `.csv` file)
+- `LOG_PATH`: the path where to store the log of the script (a `.log` file)
+- `VERBOSE`: whether to print the debug logs in the console
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
 - `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE` and `CAD`. Note that the `GDT-TS` is computed with the `TM-SCORE`.
@@ -264,8 +136,8 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 
 If you want to use the command lines, here are the option available to run the script : 
 ```
-python -m src.score_cli --pred_path --native_path --result_path --time_path
-          [--all_scores] [--config_path]
+python -m src.rnadvisor_cli --pred_path --native_path --result_path --time_path --log_path
+          [--all_scores] [--config_path] [--no_normalisation] [--sort_by] [--verbose]
 ```
 with: 
 ```
@@ -274,7 +146,12 @@ arguments:
   --native_path         Path to a .pdb file of the native structure.
   --result_path         Path to a directory where to store the different scores.
   --time_path           Path to a directory where to store the time of each metric.
-  --all_scores          List of the scores to use, separated by a comma. If you want to use them all, use ALL. Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD. 
+  --log_path            Path to a directory where to store the log of the script.
+  --verbose             If the user wants to print the debug logs in the console.
+  --all_scores          List of the scores to use, separated by a comma. 
+                        If you want to use them all, use `ALL`. To use all the metrics, use `METRICS`
+                        To use all the energies, use `ENERGIES`.
+                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,RASP,CLASH,BARNABA,DFIRE,rsRNASP.
   --no-normalisation    If the user doesn't want to normalise the .pdb files. 
   --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,RASP,BARNABA,DFIRE,rsRNASP.
   --config_path         Path to the config.yaml file with the different parameters.
@@ -286,8 +163,139 @@ If you use the `config_path`, it will not take into account the other parameters
 An example of use would be: 
 
 ```
-python -m src.score_cli --pred_path=docker_data/input/MODEL_1 --native_path=docker_data/input/NATIVE/1Z43.pdb --result_path=docker_data/output/ --time_path=docker_data/output/time.csv --all_scores=ALL
+python -m src.rnadvisor_cli --pred_path=docker_data/input/MODEL_1 --native_path=docker_data/input/NATIVE/1Z43.pdb --result_path=docker_data/output/ --time_path=docker_data/output/time.csv --all_scores=ALL
 ```
+
+## Description
+Here is a basic explication of the different scores, such as the original papers.
+### General metrics
+
+There are two metrics that aim to give a general idea of how well two 3D structures are compare to each other.
+#### RMSD
+The RMSD is described as the Root-mean-square deviation of two molecules.
+
+It usually uses some rotation to have a representative value of RMSD.
+
+There are multiple repositories that implement this metrics, such as:
+- [rmsd](https://github.com/charnley/rmsd)
+- [RNA_Assessment](https://github.com/RNA-Puzzles/RNA_assessment)
+- [RNA-tools](https://github.com/mmagnus/rna-tools)
+
+
+#### CLASH
+
+This is described as the number of bad overlaps per 1000 atoms.
+
+This is based on [[Davis and all]](#1) paper.
+
+I didn't succeed in implementing this score. I didn't manage integrating them to my code. Here is a list of repositories that seem to implement this score:
+
+- [MolProbity](https://github.com/rlabduke/MolProbity): original paper implementation.
+- [RNA-tools](https://github.com/mmagnus/rna-tools): it depends on [Phenix](https://phenix-online.org/), which is not open-source. See the [documentation](https://rna-tools.readthedocs.io/en/latest/tools.html?highlight=clash#module-rna_tools.tools.mq.ClashScore.ClashScore).
+- [rnaqa](https://github.com/mantczak/rnaqua): a java tool similar to this repo that implements different scores.
+
+### RNA-oriented metrics
+
+Compared to general metrics, scoring methods have been developed to take into account the locality of RNA specificities.
+
+#### P-VALUE
+
+The P-value aims to assess the global fold of an RNA at roughly “nucleotide resolution”. This is based on the [RMSD](#rmsd).
+
+Note that this metric is relevant for structures between 35 and 161 nucleotides, as mentioned in the original paper [[2]](#2).
+
+#### INF
+
+This INF (Interaction Network Fidelity) metric was invented to assess the central characteristics of RNA architecture.
+This is the Matthews correlation coefficient of interaction prediction.
+
+```math
+INF = \sqrt{\frac{TP}{TP+FP} \times \frac{TP}{TP+FN}}
+```
+
+The INF can either measure different interaction types (WC base-pairing, non-WC base pairing, base stacking) separately or combine all of the types (resulting in INFwc, INFnwc, INFstacking and INFall)
+
+It is based on the paper [[3]](#3).
+
+
+#### DI
+
+The DI (Deformation Index) metric is defined to balance the RMSD by a local value.
+
+This is defined as:
+
+```math
+DI = \frac{RMSD}{INF}
+```
+This paper [[3]](#3) mentioned this metric such as the Deformation Profile (DP), which is a distance matrix representing the average distance between a predicted model and a reference model.
+
+
+#### MCQ
+
+The MCQ score (Mean of Circular Quantities) gives a comparison in torsion angle space. Indeed, it assumes that small deviation in angle may result in topological deviation.
+
+The mathematical definition is quite complex, defined as:
+```math
+MCQ(S_T, S'_T) = arctan( \frac{1}{r|T|} \sum_{i=1}^r \sum_{j=1}^{|T|} sin \Delta (t_{ij} , t'_{ij})       ,  \frac{1}{r|T|} \sum_{i=1}^r \sum_{j=1}^{|T|} cos \Delta (t_{ij} , t'_{ij})          )
+```
+where $r$ is a number of residues in $S \cap S'$ and $T$ a set of torsion angles.
+We also have:
+
+```math
+\Delta(t, t') = \left\{
+        \begin{array}{lll}
+             0  \qquad \qquad \qquad \qquad \qquad \qquad \qquad   \text{if both t and t' are undefined } \\ 
+            \pi  \qquad \qquad \qquad \qquad \qquad \qquad \qquad \text{if either t or t' is undefined}  \\
+            min(\text{diff}(t, t'), 2\pi - \text{diff}(t, t'))) \quad  \text{otherwise} 
+        \end{array}
+    \right. 
+```
+
+
+The original source code is the [MCQ4Structures](https://github.com/tzok/mcq4structures), adapted from [[4]](#4).
+
+
+### Protein-based metrics
+
+Even if RNA and proteins are different, some metric functions from proteins can be adapted to RNA.
+
+### CAD-score
+
+The CAD score (Contact Area Difference) aims to measure the structural similarity in a contact-area difference-based function.
+
+It has been described for proteins [[6]](#6), and then adapted for RNA [[7]](#7).
+
+If we denote the contact area between residues `i` and `j` in the reference structure as $T_{(i,j)}$, and the contact area in the predicted model as $M_{(i,j)}$, the $CAD_{score}$ is defined as:
+
+```math
+
+CAD_{score} = 1-\frac{  \sum_{(i,j) \in G}  min( |T_{(i,j)} - M_{(i,j)}  ,  T_{(i,j)})         }{ \sum_{(i,j) \in G} T_{(i,j)} }
+
+```
+
+
+
+#### TM-score
+The TM-score (Template-Modeling) aims to give a metric that isn't dependent of the length of the structures.
+
+This is adapted to RNA in [[5]](#5), where the TM-score is defined as:
+
+```math
+
+TM_{score_{RNA}} = \frac{1}{L}\sum_{i=1}^{L_{ali}} \frac{1}{1 + (\frac{d_i}{d_0})^2}
+
+```
+with $d_0 = 0.6 \sqrt{L-0.5} - 2.5$ the scaling factor to ensure the score of random RNA pairs is independent of RNA length.
+
+
+
+### GDT-TS
+
+The GDT-TS score (Global Distance Test Total Score) denote the sum of percent of residues that are within 1,2,4 and 8Å between a model and a reference structure, divided by 4.
+
+This is a value that varies between 0 and 1, inspired by the protein metrics.
+
+It has been adapted from the CASP competition [[8]](#8).
 
 ## References
 <a id="1">[1]</a> 

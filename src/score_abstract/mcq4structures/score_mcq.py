@@ -13,7 +13,6 @@ import subprocess
 from typing import Dict, Optional, Tuple
 
 import numpy as np
-from loguru import logger
 
 from src.score_abstract.score_abstract import ScoreAbstract
 from src.utils import time_it
@@ -47,7 +46,6 @@ class ScoreMCQ(ScoreAbstract):
         try:
             mcq_score = float(str(output.decode()).replace("\n", ""))
         except ValueError:
-            logger.debug(f"NO SCORE FOR MCQ WITH {pred_path} FOR NATIVE : {native_path}")
             mcq_score = np.nan
         return mcq_score
 
