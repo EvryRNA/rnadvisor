@@ -10,7 +10,7 @@ They suggest the following rule:
 They also explain that the P-value with their formula makes sense for RNAs sequence between
                 35 and 161 nucleotides.
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from lib.rna_assessment.RNA_normalizer.structures.pdb_comparer import PDBComparer
@@ -37,7 +37,9 @@ class ScorePValue(ScoreAbstractRnaAssessment):
         self.p_value_param = p_value_param
 
     @time_it
-    def _compute_from_structure(self, native_struc: PDBStruct, pred_struc: PDBStruct) -> Dict:
+    def _compute_from_structure(
+        self, native_struc: PDBStruct, pred_struc: PDBStruct
+    ) -> Tuple[Dict, Dict]:
         """
         Compute the P-value associated with the RMSD score
             from the native and predicted structures.
@@ -47,7 +49,7 @@ class ScorePValue(ScoreAbstractRnaAssessment):
         :return: a score from these structures
         """
         pvalue = self.compute_p_value_from_structures(native_struc, pred_struc, self.p_value_param)
-        return {"P-VALUE": pvalue}
+        return {"P-VALUE": pvalue}  # type: ignore
 
     @staticmethod
     def compute_p_value(

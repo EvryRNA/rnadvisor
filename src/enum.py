@@ -6,6 +6,9 @@ from typing import Dict
 from src.score_abstract.barnaba.score_barnaba import ScoreBarnaba
 from src.score_abstract.dfire.score_dfire import ScoreDfire
 from src.score_abstract.mcq4structures.score_mcq import ScoreMCQ
+from src.score_abstract.openstructure.qs_score import QSScore
+from src.score_abstract.openstructure.score_lddt import ScorelDDT
+from src.score_abstract.openstructure.tm_score import TMScore
 from src.score_abstract.rasp.score_rasp import ScoreRASP
 from src.score_abstract.rs_rnasp.score_rs_rnasp import ScoreRsRNASP
 from src.score_abstract.score_rna_assessment.score_clash import ScoreClash
@@ -14,7 +17,7 @@ from src.score_abstract.score_rna_assessment.score_inf import ScoreINF
 from src.score_abstract.score_rna_assessment.score_p_value import ScorePValue
 from src.score_abstract.score_rna_assessment.score_rmsd import ScoreRMSD
 from src.score_abstract.score_voronota.score_cad import ScoreCAD
-from src.score_abstract.score_zhanggroup.tm_gdt_scores import TmGdtScores
+from src.score_abstract.score_zhanggroup.tm_gdt_scores import GdtScores
 
 CONVERT_NAME_TO_SCORING_CLASS: Dict = {
     "RMSD": ScoreRMSD,
@@ -22,13 +25,29 @@ CONVERT_NAME_TO_SCORING_CLASS: Dict = {
     "INF": ScoreINF,
     "DI": ScoreDI,
     "MCQ": ScoreMCQ,
-    "TM-SCORE": TmGdtScores,
+    "GDT-TS": GdtScores,
     "CAD": ScoreCAD,
     "RASP": ScoreRASP,
     "CLASH": ScoreClash,
     "BARNABA": ScoreBarnaba,
     "DFIRE": ScoreDfire,
     "rsRNASP": ScoreRsRNASP,
+    "lDDT": ScorelDDT,
+    "TM-SCORE": TMScore,
+    "QS-SCORE": QSScore,
 }
-LIST_ALL_METRICS = ["RMSD", "P-VALUE", "INF", "DI", "MCQ", "TM-SCORE", "CAD", "BARNABA", "CLASH"]
+LIST_ALL_METRICS = [
+    "RMSD",
+    "P-VALUE",
+    "INF",
+    "DI",
+    "MCQ",
+    "TM-SCORE",
+    "CAD",
+    "BARNABA",
+    "CLASH",
+    "GDT-TS",
+    "lDDT",
+    "QS-SCORE",
+]
 LIST_ALL_ENERGIES = ["BARNABA", "DFIRE", "rsRNASP", "RASP"]

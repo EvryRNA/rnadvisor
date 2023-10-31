@@ -13,6 +13,7 @@ SCORE_HP:
     - DI
     - MCQ
     - TM-SCORE
+    - lDDT
     - CAD
     - RASP
     - CLASH

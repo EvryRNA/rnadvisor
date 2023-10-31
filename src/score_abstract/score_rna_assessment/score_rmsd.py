@@ -5,7 +5,7 @@ To center the two molecules, it uses the Kabsch algorithm:
 Kabsch W., 1976, A solution for the best rotation to relate two sets of vectors,
 Acta Crystallographica, A32:922-923, doi: http://dx.doi.org/10.1107/S0567739476001873
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from lib.rna_assessment.RNA_normalizer.structures.pdb_comparer import PDBComparer
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
@@ -21,7 +21,9 @@ class ScoreRMSD(ScoreAbstractRnaAssessment):
         super(ScoreRMSD, self).__init__(*args, **kwargs)
 
     @time_it
-    def _compute_from_structure(self, native_struc: PDBStruct, pred_struc: PDBStruct) -> Dict:
+    def _compute_from_structure(
+        self, native_struc: PDBStruct, pred_struc: PDBStruct
+    ) -> Tuple[Dict, Dict]:
         """
         Compute the RMSD score from the native and predicted structures.
         Return in a dictionary format.
@@ -30,7 +32,7 @@ class ScoreRMSD(ScoreAbstractRnaAssessment):
         :return: the RMSD score from these structures
         """
         rmsd = self.compute_rmsd_from_structures(native_struc, pred_struc)
-        return {"RMSD": rmsd}
+        return {"RMSD": rmsd}  # type: ignore
 
     @staticmethod
     def compute_rmsd_from_structures(native_struc: PDBStruct, pred_struc: PDBStruct) -> float:
