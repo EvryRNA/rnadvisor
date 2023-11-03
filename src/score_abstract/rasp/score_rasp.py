@@ -12,6 +12,7 @@ import subprocess
 import time
 from typing import Dict, List, Optional, Tuple
 
+
 from src.score_abstract.score_abstract import ScoreAbstract
 
 

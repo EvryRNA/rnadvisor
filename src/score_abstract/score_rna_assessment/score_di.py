@@ -2,7 +2,7 @@
 Class that implements the Deformation Index score.
 It uses the RNA_Assessment repo.
 """
-from typing import Dict, Optional
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
@@ -64,7 +64,9 @@ class ScoreDI(ScoreAbstractRnaAssessment):
         return di
 
     @time_it
-    def _compute_from_structure(self, native_struc: PDBStruct, pred_struc: PDBStruct) -> Dict:
+    def _compute_from_structure(
+        self, native_struc: PDBStruct, pred_struc: PDBStruct
+    ) -> Tuple[Dict, Dict]:
         """
         Compute the DI score from the native and predicted structures.
         Return in a dictionary format.
@@ -73,4 +75,4 @@ class ScoreDI(ScoreAbstractRnaAssessment):
         :return: the DI score from these structures
         """
         di = self.compute_di_from_structures(native_struc, pred_struc)
-        return {"DI": di}
+        return {"DI": di}  # type: ignore

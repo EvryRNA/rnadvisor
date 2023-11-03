@@ -3,7 +3,7 @@ import argparse
 import os.path
 import sys
 from datetime import datetime
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, Any
 
 import numpy as np
 import pandas as pd
@@ -16,7 +16,7 @@ from src.score_abstract.score_abstract import ScoreAbstract
 from src.utils import read_yaml_to_dict
 
 
-class RNAdvisorCLI:
+class ScoreCLI:
     def __init__(
         self,
         pred_path: str,
@@ -117,8 +117,11 @@ class RNAdvisorCLI:
             logger.debug(error_msg)
         elif result_path.endswith(".csv"):
             # Save a .csv file. Need to check if the path exists
-            dir_path = os.path.dirname(result_path)
-            os.makedirs(dir_path, exist_ok=True)
+            try:
+                dir_path = os.path.dirname(result_path)
+                os.makedirs(dir_path, exist_ok=True)
+            except FileNotFoundError:
+                pass
         else:
             # Otherwise, create the path. Do nothing if the directory already existed.
             os.makedirs(result_path, exist_ok=True)
@@ -286,8 +289,13 @@ class RNAdvisorCLI:
                 all_scores_split = score_conversion[all_scores]
             else:
                 all_scores_split = all_scores  # type: ignore
-        all_scores_name: str = ", ".join(all_scores_split)
+        all_scores_name: Any = (
+            all_scores_split.strip().split(",") if "," in all_scores_split else all_scores_split
+        )  # type: ignore
         logger.info(f"Using the following scores: {all_scores_name}")
+        all_scores_split = (
+            [all_scores_split] if isinstance(all_scores_name, str) else all_scores_name
+        )
         for score_n in all_scores_split:
             if score_n in CONVERT_NAME_TO_SCORING_CLASS:
                 all_scores_class.append(
@@ -302,7 +310,7 @@ class RNAdvisorCLI:
         :param all_scores: names of the scores to use separated by a comma. It can also be `ALL`.
         :return: dictionary with the parameters to initialise the class.
         """
-        all_scores_class = RNAdvisorCLI.convert_cli_scores(all_scores)
+        all_scores_class = ScoreCLI.convert_cli_scores(all_scores)
         arguments = {**kwargs, **{"all_scores": all_scores_class}}
         return arguments
 
@@ -346,7 +354,7 @@ class RNAdvisorCLI:
         """
         if config_path is None:
             # Initialise with the arguments of the command line
-            return RNAdvisorCLI.convert_cli_args_scores(*args, **kwargs)
+            return ScoreCLI.convert_cli_args_scores(*args, **kwargs)
         yaml_content = read_yaml_to_dict(config_path)
         # Arguments for the CLI
         score_hp = yaml_content.get("SCORE_HP", {})
@@ -360,8 +368,8 @@ class RNAdvisorCLI:
         )
         normalise, sort_by = score_hp.get("NORMALISATION", True), score_hp.get("SORT_BY", None)
         all_scores = score_hp.get("ALL_SCORES", None)
-        bin_paths = RNAdvisorCLI.get_bin_paths(yaml_content)
-        all_scores = RNAdvisorCLI.convert_cli_scores(all_scores)
+        bin_paths = ScoreCLI.get_bin_paths(yaml_content)
+        all_scores = ScoreCLI.convert_cli_scores(all_scores)
         config = {
             "pred_path": pred_path,
             "native_path": native_path,
@@ -478,7 +486,7 @@ class RNAdvisorCLI:
 
 
 if __name__ == "__main__":
-    args = RNAdvisorCLI.get_arguments()
-    args = RNAdvisorCLI.convert_cli_args(**vars(args))
-    score_cli = RNAdvisorCLI(**args)
+    args = ScoreCLI.get_arguments()
+    args = ScoreCLI.convert_cli_args(**vars(args))
+    score_cli = ScoreCLI(**args)
     score_cli.compute_scores()

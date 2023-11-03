@@ -23,11 +23,12 @@ It uses the following repositories:
     I forked the project because I did some modifications, leading to use the following implementation of [RNA_Assessment-forked](https://github.com/clementbernardd/RNA_assessment/tree/scoring-version)
 - [MCQ4Structures](https://github.com/tzok/mcq4structures) : a java code that computes the [MCQ](#mcq) score. 
 - [Voronota](https://github.com/kliment-olechnovic/voronota): a C++ code that computes the [CAD](#cad) score. 
-- [Zhanglab](https://zhanggroup.org/TM-score/): a complete website to compute multiple scores, such as the [TM-score](#tm-score) and [GDT-TS](#gdt-ts) scores.
+- [Zhanglab](https://zhanggroup.org/TM-score/): a complete website to compute multiple scores, such as the [GDT-TS](#gdt-ts) scores.
 - [BaRNAba](https://github.com/srnas/barnaba): an implementation of the eRMSD and eSCORE. I created a fork version of [BaRNAba-forked](https://github.com/clementbernardd/barnaba/tree/scoring-version).
 - [DFIRE](https://github.com/tcgriffith/dfire_rna): an implementation of the DFIRE energy function. 
 - [RASP](http://melolab.org/webrasp/download.php): an implementation of the RASP energy function. I created a fork version of [RASP-forked](https://github.com/clementbernardd/rasp_rna)
 - [rsRNASP](https://github.com/Tan-group/rsRNASP): a Python implementation of the rsRNASP score. I created a fork version of [rsRNASP-forked](https://github.com/clementbernardd/rsRNASP/tree/scoring-version) with only the needed files.
+- [OpenStructure](https://git.scicore.unibas.ch/schwede/openstructure): a C++ and Python implementation for structure analysis. It is used to compute [TM-score](#tm-score) and [lDDT]($lddt) metrics. 
 
 
 Note that all these repositories are implementing a lot of different functions. For the sake of this project, I just took what seemed to be the most relevant for the scoring of 3D structures. 
@@ -43,7 +44,7 @@ To install the image, use:
 ```
 make docker_start
 ```
-It will build the image, named `rna_scores`, and then run the container with two volumes (`docker_data` and `tmp`) and use the `--config_path` argument.
+It will build the image, named `rnadvisor`, and then run the container with two volumes (`docker_data` and `tmp`) and use the `--config_path` argument.
 Therefore, the parameters (like the path of the inputs, outputs, etc) are stored in the `config.yaml` file.
 
 To debug the code or go inside the container, you can use the dev mode.
@@ -66,19 +67,6 @@ docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_sc
 ```
 Note that there are mounted volumes to ensure that the inputs can be read by the container.
 
-### Locally
-
-To install the code locally, you need to install each repo and ensure that all the repos can be run.
-
-This is not recommended.
-
-Please note that it only works on Linux, as the dependencies of some repo used depend on Linux, using :
-
-```
-./script/install.sh
-```
-
-To run the code in MacOS or Windows, please refer to [Docker](#docker) section. 
 
 
 ### Parameters
@@ -117,6 +105,8 @@ SCORE_HP:
     - BARNABA
     - DFIRE
     - rsRNASP
+    - lDDT
+    - QS-SCORE
 ```
 
 Note that the variables in the `BIN_PATH` are the default values when you install the code using the provided installation scripts.
@@ -130,7 +120,7 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `VERBOSE`: whether to print the debug logs in the console
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
-- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE` and `CAD`. Note that the `GDT-TS` is computed with the `TM-SCORE`.
+- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT` and `CAD`. Note that there is also available the `QS-score`. 
 
 #### Using CLI
 
@@ -151,9 +141,9 @@ arguments:
   --all_scores          List of the scores to use, separated by a comma. 
                         If you want to use them all, use `ALL`. To use all the metrics, use `METRICS`
                         To use all the energies, use `ENERGIES`.
-                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,RASP,CLASH,BARNABA,DFIRE,rsRNASP.
+                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,lDDT,RASP,CLASH,BARNABA,DFIRE,rsRNASP.
   --no-normalisation    If the user doesn't want to normalise the .pdb files. 
-  --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,RASP,BARNABA,DFIRE,rsRNASP.
+  --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,lDDT,RASP,BARNABA,DFIRE,rsRNASP.
   --config_path         Path to the config.yaml file with the different parameters.
 ```
 
@@ -297,6 +287,21 @@ This is a value that varies between 0 and 1, inspired by the protein metrics.
 
 It has been adapted from the CASP competition [[8]](#8).
 
+### lDDT
+
+The local distance difference test (lDDT) assesses the interatomic distance differences between a reference structure and a predicted one. 
+
+It does not require any superposition. 
+
+The lDDT considers all the pairs of atoms in the reference structure within a default distance. The atom pairs define a set of distances `L`, which is used for a predicted model. 
+A distance in the prediction is preserved if, given a threshold, it is the same as its corresponding distance in `L`. 
+The lDDT is thus derived using four different thresholds: 0.5 Å, 1 Å, 2 Å, and 4 Å. 
+lDDT is the average of four fractions of conserved distances within the four thresholds. 
+
+It ranges between 0 and 1, where 1 means a perfect reconstruction of interatomic distances.
+
+It comes from [[14]](#14)
+
 ## References
 <a id="1">[1]</a> 
 Davis, I. W., Leaver-Fay, A., Chen, V. B., Block, J. N., Kapral, G. J., Wang, X., Murray, L. W., Arendall, W. B., Snoeyink, J., Richardson, J. S., & Richardson, D. C.(2007). 
@@ -374,3 +379,10 @@ Tan YL, Wang X, Shi YZ, Zhang W, Tan ZJ.
 2022.
 rsRNASP: A residue-separation-based statistical potential for RNA 3D structure
 evaluation. Biophys J. 121: 142-156.
+
+<a id="14">[14]</a>
+Mariani, V., Biasini, M., Barbato, A., & Schwede, T. 
+(2013). 
+lDDT: a local superposition-free score for comparing protein structures and models using distance difference tests. 
+Bioinformatics (Oxford, England), 29(21), 2722–2728. 
+https://doi.org/10.1093/bioinformatics/btt473

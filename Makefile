@@ -10,7 +10,7 @@ export DOCUMENTATION_SCORE=5
 
 # Max line length for black
 MAX_LINE_LENGTH=99
-export PYTHON?=python -m
+export PYTHON?=python3 -m
 
 # Path to the lintage directory
 LINTAGE_DIR=script/lintage
@@ -47,13 +47,13 @@ compute_scores:
 
 .PHONY: docker_start
 docker_start:
-	docker build -t rna_scores --target release .
-	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rna_scores --config_path=./config.yaml
+	docker build -t rnadvisor --target release .
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor --config_path=./config.yaml
 
 .PHONY: docker_interactive
 docker_interactive:
-	docker build -t rna_scores_dev --target dev .
-	docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rna_scores_dev
+	docker build -t rnadvisor_dev --target dev .
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor_dev
 
 .PHONY: clean
 clean:
@@ -62,7 +62,7 @@ clean:
 build_all: build_tm install_mcq
 
 ##################################################################################################
-################ Code from the Zhangroup to get the TM-scores and GDT-TS score ###################
+################ Code from the Zhangroup to get GDT-TS score ###################
 ##################################################################################################
 
 # Command to build the C++ code for the TM-scores and GDT_TS scores
@@ -128,7 +128,7 @@ install_rasp:
 install_barnaba:
 	mkdir -p lib/barnaba
 	git clone https://github.com/clementbernardd/barnaba.git --branch scoring-version lib/barnaba
-	pip install -e lib/barnaba
+	pip install -r lib/barnaba/requirements.txt
 
 ##################################################################################################
 ################################# Code for DFIRE-RNA #############################################
