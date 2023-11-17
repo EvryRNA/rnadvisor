@@ -302,6 +302,13 @@ It ranges between 0 and 1, where 1 means a perfect reconstruction of interatomic
 
 It comes from [[14]](#14)
 
+## Citation 
+
+RNAdvisor: a comprehensive benchmarking tool for the measure and prediction of RNA structural model quality
+Clement Bernard, Guillaume Postic, Sahar Ghannay, Fariza Tahi
+bioRxiv 2023.11.14.567018; doi: https://doi.org/10.1101/2023.11.14.567018
+
+
 ## References
 <a id="1">[1]</a> 
 Davis, I. W., Leaver-Fay, A., Chen, V. B., Block, J. N., Kapral, G. J., Wang, X., Murray, L. W., Arendall, W. B., Snoeyink, J., Richardson, J. S., & Richardson, D. C.(2007). 
