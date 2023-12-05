@@ -18,6 +18,8 @@ from src.score_abstract.score_rna_assessment.score_p_value import ScorePValue
 from src.score_abstract.score_rna_assessment.score_rmsd import ScoreRMSD
 from src.score_abstract.score_voronota.score_cad import ScoreCAD
 from src.score_abstract.score_zhanggroup.tm_gdt_scores import GdtScores
+from src.score_abstract.ares.score_ares import ScoreARES
+from src.score_abstract.mcq4structures.score_mcq_lcs import ScoreMCQLCS
 
 CONVERT_NAME_TO_SCORING_CLASS: Dict = {
     "RMSD": ScoreRMSD,
@@ -35,6 +37,8 @@ CONVERT_NAME_TO_SCORING_CLASS: Dict = {
     "lDDT": ScorelDDT,
     "TM-SCORE": TMScore,
     "QS-SCORE": QSScore,
+    "ARES": ScoreARES,
+    "LCS-TA": ScoreMCQLCS,
 }
 LIST_ALL_METRICS = [
     "RMSD",
@@ -49,5 +53,6 @@ LIST_ALL_METRICS = [
     "GDT-TS",
     "lDDT",
     "QS-SCORE",
+    "LCS-TA",
 ]
-LIST_ALL_ENERGIES = ["BARNABA", "DFIRE", "rsRNASP", "RASP"]
+LIST_ALL_ENERGIES = ["BARNABA", "DFIRE", "rsRNASP", "RASP", "ARES"]

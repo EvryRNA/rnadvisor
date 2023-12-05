@@ -127,7 +127,7 @@ install_rasp:
 .PHONY: install_barnaba
 install_barnaba:
 	mkdir -p lib/barnaba
-	git clone https://github.com/clementbernardd/barnaba.git --branch scoring-version lib/barnaba
+	git clone https://github.com/clementbernardd/barnaba.git --branch scoring-version3.8 lib/barnaba
 	pip install -r lib/barnaba/requirements.txt
 
 ##################################################################################################
@@ -147,3 +147,14 @@ install_dfire:
 install_rs_rnasp:
 	mkdir -p lib/rs_rnasp
 	git clone https://github.com/clementbernardd/rsRNASP.git --branch scoring-version lib/rs_rnasp
+
+##################################################################################################
+################################## Code for cgRNASP ##############################################
+##################################################################################################
+
+.PHONY: install_cg_rnasp
+install_cg_rnasp:
+	mkdir -p lib/cgRNASP
+	git clone https://github.com/clementbernardd/cgrnasp_fork.git lib/cgRNASP
+	make -C lib/cgRNASP install_all
+

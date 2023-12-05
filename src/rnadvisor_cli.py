@@ -290,8 +290,10 @@ class ScoreCLI:
             else:
                 all_scores_split = all_scores  # type: ignore
         all_scores_name: Any = (
-            all_scores_split.strip().split(",") if "," in all_scores_split else all_scores_split
-        )  # type: ignore
+            all_scores_split.strip().split(",")  # type: ignore
+            if "," in all_scores_split
+            else all_scores_split
+        )
         logger.info(f"Using the following scores: {all_scores_name}")
         all_scores_split = (
             [all_scores_split] if isinstance(all_scores_name, str) else all_scores_name
