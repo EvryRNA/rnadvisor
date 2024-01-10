@@ -11,7 +11,13 @@ from lib.rna_assessment.RNA_normalizer.structures.pdb_normalizer import PDBNorma
 from loguru import logger
 from tqdm import tqdm
 
-from src.enum import CONVERT_NAME_TO_SCORING_CLASS, LIST_ALL_METRICS, LIST_ALL_ENERGIES
+from src.enum import (
+    CONVERT_NAME_TO_SCORING_CLASS,
+    LIST_ALL_METRICS,
+    LIST_ALL_ENERGIES,
+    DECOYS_LIMITED,
+    DISTINCT_METRICS,
+)
 from src.score_abstract.score_abstract import ScoreAbstract
 from src.utils import read_yaml_to_dict
 
