@@ -53,15 +53,9 @@ WORKDIR /app/
 COPY requirements.txt .
 # Copy the python code from RNA_Assessment and MC-Annotate binary file
 COPY --from=rna_assessment /src/lib/rna_assessment ./lib/rna_assessment
-# Copy the code of mcq4structures - the requirements are in a *.jar file
-COPY --from=mcq4structures /src/lib/mcq4structures ./lib/mcq4structures
-# Copy the binary file
 COPY --from=zhanglab /src/lib/zhanggroup/ ./lib/zhanggroup
 # Copy the codes for ARES
 COPY --from=ares /app/ ./lib/ares/
-#COPY --from=ares /app/ares_release ./lib/ares/ares_release
-#COPY --from=ares /app/requirements.txt ./lib/ares/
-#COPY --from=ares /app/post_requirements.txt ./lib/ares/
 COPY --from=ares /venv /venv
 
 ENV RASP=/app/lib/rasp
