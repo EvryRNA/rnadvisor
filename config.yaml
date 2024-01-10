@@ -1,21 +1,23 @@
 SCORE_HP:
-  PRED_PATH: "docker_data/input/example/PREDS/rp01"
-  NATIVE_PATH: "docker_data/input/example/NATIVE/rp01.pdb"
-  RESULT_PATH: "docker_data/output/example/rp01.csv"
-  TIME_PATH: "docker_data/output/example/rp01_time.csv"
+  PRED_PATH: "docker_data/input/MODEL_1/3dRNA-1Z43-2.pdb"
+  NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
+  RESULT_PATH: "docker_data/output/test.csv"
+  TIME_PATH: "docker_data/output/rp01_time.csv"
   LOG_PATH: "docker_data/logs/out.log"
   NORMALISATION: true
   VERBOSE: false
   ALL_SCORES:
-    - RMSD
-    - P-VALUE
-    - INF
-    - DI
-    - MCQ
-    - TM-SCORE
-    - lDDT
-    - CAD
-    - RASP
-    - CLASH
-    - BARNABA
+    - LCS-TA
+    #    - RMSD
+    #- P-VALUE
+    #- ARES
+#    - INF
+#    - DI
+#    - MCQ
+#    - TM-SCORE
+#    - lDDT
+#    - CAD
+#    - RASP
+#    - CLASH
+#    - BARNABA
   SORT_BY: RMSD
