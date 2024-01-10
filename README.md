@@ -122,6 +122,17 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
 - `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT` and `CAD`. Note that there is also available the `QS-score`. 
 
+### Scenario
+
+We provide different scenario of use for our tool.
+These scenarios can be computed by changing the `ALL_SCORES` parameters in the config file or in the command line.
+
+- **Full decoys** (`FULL_DECOYS`): scenario where all the available scoring functions are computed. This scenario is set to have a complete set of scoring functions for high accuracy in the near-native structures assessment.
+- **Decoys limited** (`DECOYS_LIMITED`): scenario to get near-native structures from scoring functions but with a limited computation capability. It also minimises the CO2 consumption. It uses the `DFIRE-RNA` and `eSCORE` to bring quick computation for large benchmarks.
+- **All metrics** (`ALL_METRICS`): scenario for computing all the metrics. It is used when all the metrics are interesting for experimentation and the computation time is not restricted.
+- **Distinct metrics** (`DISTINCT_METRICS`): scenario where only the main metrics with low computation time are to be used. It also has a low CO2 consumption.  It gathers the `DI`, `GDT-TS` and `MCQ` metrics. 
+
+
 #### Using CLI
 
 If you want to use the command lines, here are the option available to run the script : 

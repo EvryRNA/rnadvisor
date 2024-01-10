@@ -276,6 +276,10 @@ class ScoreCLI:
             "ALL": list(CONVERT_NAME_TO_SCORING_CLASS.keys()),
             "METRICS": LIST_ALL_METRICS,
             "ENERGIES": LIST_ALL_ENERGIES,
+            "FULL_DECOYS": LIST_ALL_ENERGIES,
+            "DECOYS_LIMITED": DECOYS_LIMITED,
+            "ALL_METRICS": LIST_ALL_METRICS,
+            "DISTINCT_METRICS": DISTINCT_METRICS,
         }
         if isinstance(all_scores, list):
             all_scores_split = []
