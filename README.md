@@ -315,9 +315,10 @@ It comes from [[14]](#14)
 
 ## Citation 
 ```
-RNAdvisor: a comprehensive benchmarking tool for the measure and prediction of RNA structural model quality.
-Clement Bernard, Guillaume Postic, Sahar Ghannay, Fariza Tahi.
-bioRxiv 2023.11.14.567018; doi: https://doi.org/10.1101/2023.11.14.567018
+Clement Bernard, Guillaume Postic, Sahar Ghannay, Fariza Tahi,
+RNAdvisor: a comprehensive benchmarking tool for the measure and prediction of RNA structural model quality,
+Briefings in Bioinformatics, Volume 25, Issue 2, March 2024, bbae064,
+https://doi.org/10.1093/bib/bbae064
 ```
 
 ## References
