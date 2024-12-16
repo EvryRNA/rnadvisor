@@ -8,6 +8,7 @@ MCQ4Structures to compute similarity of molecule structures.
 Central European Journal of Operations Research, 22(3), 457–473.
 https://doi.org/10.1007/s10100-013-0296-5
 """
+
 import os
 import subprocess
 from typing import Dict, Optional, Tuple
@@ -50,7 +51,7 @@ class ScoreMCQ(ScoreAbstract):
         return mcq_score
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the MCQ score for a given prediction and the native .pdb path.
         :param pred_path: the path to the .pdb file of a prediction.

@@ -10,6 +10,7 @@ Source for the GDT-TS score (adapted from the CASP competition):
     Zemla A, Venclovas C, Moult J, Fidelis K. 1999.
     Processing and analysis of CASP3 protein structure predictions. Proteins3:22–29
 """
+
 import os
 import subprocess
 import time
@@ -38,7 +39,7 @@ class GdtScores(ScoreAbstract):
         )
         super(GdtScores, self).__init__(*args, **kwargs)
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the score for a given prediction and the native .pdb path.
         :param pred_path: the path to the .pdb file of a prediction.

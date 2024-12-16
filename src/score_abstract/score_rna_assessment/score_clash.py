@@ -13,6 +13,7 @@ https://doi.org/10.1093/nar/gkm216
 Implementation from
     https://github.com/RNA-Puzzles/rna-tools/blob/master/rna_tools/tools/ClashCalc/ClashCalc.py
 """
+
 from typing import Dict, Tuple
 
 import numpy as np

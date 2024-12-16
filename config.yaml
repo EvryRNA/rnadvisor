@@ -1,20 +1,25 @@
 SCORE_HP:
-  PRED_PATH: "docker_data/input/MODEL_1/3dRNA-1Z43-2.pdb"
+  PRED_PATH: "docker_data/input/MODEL_1"
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
-  RESULT_PATH: "docker_data/output/test.csv"
-  TIME_PATH: "docker_data/output/rp01_time.csv"
+  RESULT_PATH: "docker_data/output/test_tb_mcq.csv"
+  TIME_PATH: "docker_data/output/time_tb_mcq.csv"
   LOG_PATH: "docker_data/logs/out.log"
   NORMALISATION: true
   VERBOSE: false
+  PARAMS:
+    mcq_threshold: 10
   ALL_SCORES:
-    - LCS-TA
-    #    - RMSD
-    #- P-VALUE
-    #- ARES
+    - ALL
+#    - CGRNASP
+#    - TB-MCQ
+#    - MCQ
+#    - RMSD
+#    - P-VALUE
 #    - INF
 #    - DI
 #    - MCQ
 #    - TM-SCORE
+#    - TM-SCORE (OST)
 #    - lDDT
 #    - CAD
 #    - RASP

@@ -14,6 +14,7 @@ Geometric deep learning of RNA structure.
 Science373,1047-1051(2021).
 DOI:10.1126/science.abe5650
 """
+
 import os
 from typing import Dict, List, Optional, Tuple
 from src.score_abstract.score_abstract import ScoreAbstract
@@ -72,6 +73,6 @@ class ScoreARES(ScoreAbstract):
         return out[0]["test_loss"]
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         ares = self.compute_ares(pred_path, self.ares_weights)
         return {"ARES": ares}  # type: ignore

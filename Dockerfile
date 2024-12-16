@@ -55,8 +55,8 @@ COPY requirements.txt .
 COPY --from=rna_assessment /src/lib/rna_assessment ./lib/rna_assessment
 COPY --from=zhanglab /src/lib/zhanggroup/ ./lib/zhanggroup
 # Copy the codes for ARES
-COPY --from=ares /app/ ./lib/ares/
-COPY --from=ares /venv /venv
+#COPY --from=ares /app/ ./lib/ares/
+#COPY --from=ares /venv /venv
 
 ENV RASP=/app/lib/rasp
 ENV DFIRE_RNA_HOME=/app/lib/dfire
@@ -74,7 +74,7 @@ RUN apt-get update &&\
 RUN python3.8 -m venv /venv
 RUN pip3 install --upgrade pip
 
-RUN pip install -e lib/ares/e3nn_ares
+RUN #pip install -e lib/ares/e3nn_ares
 RUN pip install -r requirements.txt
 
 RUN make install_dfire
@@ -85,6 +85,10 @@ RUN make install_rs_rnasp
 RUN cd lib/rs_rnasp ; make build
 RUN make install_barnaba
 RUN make install_cg_rnasp
+RUN make install_usalign
+RUN apt-get install git-lfs &&\
+    git lfs install && \
+    make install_tb_mcq
 
 RUN ulimit -c unlimited # To enable MCQ4structures to run well
 RUN echo "" > lib/__init__.py
@@ -93,6 +97,7 @@ RUN wget https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.
     tar -xvf openjdk-17+35_linux-x64_bin.tar.gz && \
     mv jdk-17 /opt/ && \
     rm openjdk-17+35_linux-x64_bin.tar.gz
+RUN make install_mcq
 RUN rm -rf /var/lib/apt/lists/*
 # Copy the needed files
 COPY . .

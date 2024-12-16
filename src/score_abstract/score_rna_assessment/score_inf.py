@@ -6,6 +6,7 @@ The INF can either measure different interaction types
     (WC base-pairing, non-WC base pairing, base stacking) separately or combine
     all of the types (resulting in INFwc, INFnwc, INFstacking and INFall)
 """
+
 from typing import Dict, Optional, Tuple
 
 import numpy as np

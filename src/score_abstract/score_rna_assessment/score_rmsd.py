@@ -5,6 +5,7 @@ To center the two molecules, it uses the Kabsch algorithm:
 Kabsch W., 1976, A solution for the best rotation to relate two sets of vectors,
 Acta Crystallographica, A32:922-923, doi: http://dx.doi.org/10.1107/S0567739476001873
 """
+
 from typing import Dict, Optional, Tuple
 
 from lib.rna_assessment.RNA_normalizer.structures.pdb_comparer import PDBComparer

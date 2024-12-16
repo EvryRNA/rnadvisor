@@ -13,7 +13,7 @@ class QSScore(AbstractOST):
         super(QSScore, self).__init__(*args, **kwargs)
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the qs-score for a single prediction.
         :param pred_path: the path to the .pdb file of a prediction.

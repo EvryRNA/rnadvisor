@@ -9,6 +9,7 @@ The associated paper is the following:
     Nucleic Acids Research, Volume 42, Issue W1, 1 July 2014,
     Pages W259–W263, https://doi.org/10.1093/nar/gku294
 """
+
 import subprocess
 from typing import Dict, Tuple
 
@@ -48,7 +49,7 @@ class ScoreCAD(ScoreAbstract):
         return cad_score
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the CAD score for a given prediction and the native .pdb path.
         :param pred_path: the path to the .pdb file of a prediction.

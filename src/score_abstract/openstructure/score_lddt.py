@@ -11,6 +11,7 @@ Source for the lDDT score:
     Bioinformatics (Oxford, England), 29(21), 2722–2728.
     https://doi.org/10.1093/bioinformatics/btt473
 """
+
 from typing import Tuple, Dict
 
 
@@ -27,7 +28,7 @@ class ScorelDDT(ScoreAbstract):
         super(ScorelDDT, self).__init__(*args, **kwargs)
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the lDDT for a single prediction.
         :param pred_path: the path to the .pdb file of a prediction.
