@@ -34,7 +34,7 @@ class ScoreMCQ(ScoreAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :param mcq_bin_path: the binary path to the mcq-local file
         :param mcq_mode: mode to use with the MCQ: (0: relaxed, 1: compare without violations
-            and 2: compare everythinig regardless of the violations)
+            and 2: compare everything regardless of the violations)
         :return: the MCQ Score of the pred and native files
         """
         mcq_bin_path = (

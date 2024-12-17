@@ -58,12 +58,12 @@ If you want to manually build and run the docker, you can see the details in the
 
 Note that the `Dockerfile` contains multiple stage (one stage for each repo), so you need to build to final stage (called `release`, and `dev` for the dev stage):
 ```
-docker build -t rna_scores --target release .
+docker build -t rnadvisor --target release .
 ```
 
 Then, as the entrypoint in the `Dockerfile` is `python -m src.rnadvisor_cli`, you just need to provide the arguments for the commands in the running process:
 ```
-docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp rnadvisor --config_path=./config.yaml
+docker run -it -v ${PWD}/docker_data/:/app/docker_data rnadvisor --config_path=./config.yaml
 ```
 Note that there are mounted volumes to ensure that the inputs can be read by the container.
 
@@ -74,40 +74,39 @@ Note that there are mounted volumes to ensure that the inputs can be read by the
 Here are the different parameters found in the `config.yaml`: 
 
 ```yaml
-BIN_PATHS:
-  # Bin paths: nothing to change if you follow the installation instructions
-  RNA_ASSESSMENT: "lib/rna_assessment/MC-Annotate"
-  ZHANG_GROUP: "lib/zhanggroup/TMscore"
-  DFIRE: "lib/dfire/bin/DFIRE_RNA"
-  MCQ4STRUCTURES: "lib/mcq4structures/mcq-cli/mcq-local"
-  RASP: "lib/rasp/bin/rasp_fd"
-  rsRNASP: "lib/rs_rnasp/rsRNASP"
 SCORE_HP:
   PRED_PATH: "docker_data/input/MODEL_1"
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
-  RESULT_PATH: "docker_data/output/test_scores.csv"
-  TIME_PATH: "docker_data/output/time_score.csv"
-  LOG_PATH: "docker_data/log/out.log"
+  RESULT_PATH: "docker_data/output/1Z43.csv"
+  TIME_PATH: "docker_data/output/time_1Z43.csv"
+  LOG_PATH: "docker_data/output/log_1Z43.log"
   NORMALISATION: true
-  SORT_BY: RMSD
   VERBOSE: false
   PARAMS:
-    mcq_threshold: 10
+    mcq_threshold: 20
+    mcq_mode: 2
   ALL_SCORES:
+    # Metrics
     - RMSD
     - P-VALUE
     - INF
     - DI
     - MCQ
-    - TM-SCORE
+    - GDT-TS
     - CAD
-    - RASP
-    - CLASH
+    - lDDT
+    - TM-SCORE (OST)
+    - TM-SCORE # This version is faster
+    - QS-SCORE
+    - LCS-TA
     - BARNABA
+    # Scoring functions
+    - RASP
     - DFIRE
     - rsRNASP
-    - lDDT
-    - QS-SCORE
+    - CGRNASP
+    - TB-MCQ
+  SORT_BY: RMSD
 ```
 
 Note that the variables in the `BIN_PATH` are the default values when you install the code using the provided installation scripts.
@@ -121,7 +120,7 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `VERBOSE`: whether to print the debug logs in the console
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
-- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT`, `CAD`, `LCS-TA`. Note that there is also available the `QS-score`. 
+- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT`, `CAD`, `LCS-TA` or `BARNABA`. Note that there is also available the `QS-score`. 
 Scoring functions are also available: `BARNABA`, `DFIRE`, `rsRNASP`, `RASP`, `CGRNASP` and `TB-MCQ`.
 
 ### Scenario
@@ -158,7 +157,9 @@ arguments:
   --no-normalisation    If the user doesn't want to normalise the .pdb files. 
   --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,lDDT,RASP,BARNABA,DFIRE,rsRNASP.
   --config_path         Path to the config.yaml file with the different parameters.
-  --params              Hyperparameters of the different methods. It could be used to set the threshold for LCS-TA using `--params='{"mcq_threshold": 10}'`. 
+  --params              Hyperparameters of the different methods. It could be used to set the threshold for LCS-TA 
+   or parameters of MCQ using `--params='{"mcq_threshold": 10, "mcq_mode": 2}'`. Values for `mcq_threshold` are 10, 15, 20 or 25 and values for 
+    `mcq_mode` are 0 (relaxed), 1 (comparison without violations) or 2 (comparison of everything regardless violations).
 ```
 
 If you use the `config_path`, it will not take into account the other parameters (and only take into account what is specified in the `config.yaml` file)
