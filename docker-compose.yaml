@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  rnadvisor:
+    build:
+      context: .
+      target: release
+      dockerfile: Dockerfile
+    image: rnadvisor
+    volumes:
+      - ./docker_data:/app/docker_data
+      - ./tmp:/app/tmp
+      - ./config.yaml:/app/config.yaml
+      - ./lib/rna_torsionbert:/app/lib/rna_torsionbert
+    command: --config_path=./config.yaml
+    stdin_open: true
+    tty: true
+    restart: no
+

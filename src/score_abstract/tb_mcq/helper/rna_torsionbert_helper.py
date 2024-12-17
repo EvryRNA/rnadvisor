@@ -32,7 +32,11 @@ BACKBONE = [
 
 class RNATorsionBERTHelper:
     def __init__(self):
-        self.model_name = "lib/rna_torsionbert"
+        self.model_name = (
+            "lib/rna_torsionbert"
+            if os.path.exists("lib/rna_torsionbert")
+            else "sayby/rna_torsionBERT"
+        )
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name, trust_remote_code=True)
         self.params_tokenizer = {
             "return_tensors": "pt",
@@ -81,9 +85,9 @@ class RNATorsionBERTHelper:
         :return: a np.ndarray with the angles for the sequence
         """
         if input_ids is not None:
-            output[(input_ids == 0) | (input_ids == 2) | (input_ids == 3) | (input_ids == 4)] = (
-                np.nan
-            )
+            output[
+                (input_ids == 0) | (input_ids == 2) | (input_ids == 3) | (input_ids == 4)
+            ] = np.nan
         pair_indexes, impair_indexes = np.arange(0, output.shape[-1], 2), np.arange(
             1, output.shape[-1], 2
         )

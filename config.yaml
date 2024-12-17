@@ -7,22 +7,25 @@ SCORE_HP:
   NORMALISATION: true
   VERBOSE: false
   PARAMS:
-    mcq_threshold: 10
+    mcq_threshold: 20
+    mcq_mode: 0
   ALL_SCORES:
-    - ALL
-#    - CGRNASP
-#    - TB-MCQ
-#    - MCQ
-#    - RMSD
-#    - P-VALUE
-#    - INF
-#    - DI
-#    - MCQ
-#    - TM-SCORE
-#    - TM-SCORE (OST)
-#    - lDDT
-#    - CAD
-#    - RASP
-#    - CLASH
-#    - BARNABA
+    - RMSD
+    - P-VALUE
+    -INF
+    - DI
+    - MCQ
+    - GDT-TS
+    - CAD
+    - RASP
+    - BARNABA
+    - DFIRE
+    - rsRNASP
+    - lDDT
+    - TM-SCORE (OST)
+    - TM-SCORE
+    - QS-SCORE
+    - LCS-TA
+    - CGRNASP
+    - TB-MCQ
   SORT_BY: RMSD

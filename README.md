@@ -122,7 +122,7 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
 - `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT`, `CAD`, `LCS-TA`. Note that there is also available the `QS-score`. 
-Scoring functions are also available: `BARNABA`, `DFIRE`, `rsRNASP`, `RASP`, `CGRNASP` and `TB-MCQ"`.
+Scoring functions are also available: `BARNABA`, `DFIRE`, `rsRNASP`, `RASP`, `CGRNASP` and `TB-MCQ`.
 
 ### Scenario
 

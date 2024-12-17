@@ -43,19 +43,19 @@ all_tests: test_static_all test_complexity test_documentation test_unit_coverage
 
 .PHONY: compute_scores
 compute_scores:
-	$(PYTHON) src.rnadvisor_cli --config_path=./config.yaml
-	#python -m src.rnadvisor_cli --config_path=./config.yaml --params='{"mcq_threshold": 10}'
-
+	$(PYTHON) src.rnadvisor_cli --config_path=./config.yaml --params='{"mcq_threshold": 10, "mcq_mode": 2}'
 
 .PHONY: docker_start
 docker_start:
 	docker build -t rnadvisor --target release .
-	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor --config_path=./config.yaml
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v \
+		${PWD}/config.yaml:/app/config.yaml -v ${PWD}/lib/rna_torsionbert:/app/lib/rna_torsionbert rnadvisor --config_path=./config.yaml
 
 .PHONY: docker_interactive
 docker_interactive:
 	docker build -t rnadvisor_dev --target dev .
-	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor_dev
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml -v \
+		${PWD}/lib/rna_torsionbert:/app/lib/rna_torsionbert rnadvisor_dev
 
 .PHONY: clean
 clean:
@@ -137,7 +137,7 @@ install_rasp:
 install_barnaba:
 	mkdir -p lib/barnaba
 	git clone https://github.com/clementbernardd/barnaba.git --branch scoring-version3.8 lib/barnaba
-	pip install -r lib/barnaba/requirements.txt
+	#pip install -r --no-cache-dir lib/barnaba/requirements.txt
 
 ##################################################################################################
 ################################# Code for DFIRE-RNA #############################################
@@ -167,6 +167,11 @@ install_cg_rnasp:
 	git clone https://github.com/clementbernardd/cgrnasp_fork.git lib/cgRNASP
 	make -C lib/cgRNASP install_all
 
+##################################################################################################
+################################## Code for TB-MCQ ##############################################
+##################################################################################################
+
 .PHONY: install_tb_mcq
 install_tb_mcq:
+	git lfs install
 	git clone https://huggingface.co/sayby/rna_torsionBERT lib/rna_torsionbert

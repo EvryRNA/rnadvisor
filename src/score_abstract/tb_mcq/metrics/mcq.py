@@ -48,10 +48,9 @@ class MCQ:
         """
         try:
             riboses = np.radians(values[["v0", "v1", "v2", "v3", "v4"]])
-            P = np.arctan(
-                riboses["v1"] + riboses["v4"] - riboses["v0"] - riboses["v3"],
-                2 * riboses["v2"] * (np.sin(np.radians(36)) + np.sin(np.radians(72))),
-            )
+            num = riboses["v1"] + riboses["v4"] - riboses["v0"] - riboses["v3"]
+            denom = 2 * riboses["v2"] * (np.sin(np.radians(36)) + np.sin(np.radians(72)))
+            P = np.arctan(num.values, denom.values)
         except KeyError:
             P = np.nan
         return P
