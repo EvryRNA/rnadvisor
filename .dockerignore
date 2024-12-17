@@ -4,3 +4,5 @@ img
 lib
 config.yaml
 lib/rna_torsionbert
+example
+tmp

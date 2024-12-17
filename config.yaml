@@ -1,15 +1,16 @@
 SCORE_HP:
   PRED_PATH: "docker_data/input/MODEL_1"
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
-  RESULT_PATH: "docker_data/output/test_tb_mcq.csv"
-  TIME_PATH: "docker_data/output/time_tb_mcq.csv"
-  LOG_PATH: "docker_data/logs/out.log"
+  RESULT_PATH: "docker_data/output/1Z43.csv"
+  TIME_PATH: "docker_data/output/time_1Z43.csv"
+  LOG_PATH: "docker_data/output/log_1Z43.log"
   NORMALISATION: true
   VERBOSE: false
   PARAMS:
     mcq_threshold: 20
-    mcq_mode: 0
+    mcq_mode: 2
   ALL_SCORES:
+    # Metrics
     - RMSD
     - P-VALUE
     - INF
@@ -17,15 +18,16 @@ SCORE_HP:
     - MCQ
     - GDT-TS
     - CAD
-    - RASP
-    - BARNABA
-    - DFIRE
-    - rsRNASP
     - lDDT
     - TM-SCORE (OST)
-    - TM-SCORE
+    - TM-SCORE # This version is faster
     - QS-SCORE
     - LCS-TA
+    - BARNABA
+    # Scoring functions
+    - RASP
+    - DFIRE
+    - rsRNASP
     - CGRNASP
     - TB-MCQ
   SORT_BY: RMSD

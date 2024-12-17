@@ -91,13 +91,13 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y openjdk-18-jdk && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/*
 # Add pytorch CPU
-RUN #pip install loguru tqdm transformers biopython mdtraj
 RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install torch==2.2.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
-COPY . .
+COPY tests/test_tf.py tests/test_tf.py
 RUN python3 tests/test_tf.py # To download the model weights for TB-MCQ
+COPY . .
 ENTRYPOINT ["python3", "-m", "src.rnadvisor_cli"]
 
 

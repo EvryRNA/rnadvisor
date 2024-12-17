@@ -6,5 +6,8 @@ SCORE_HP:
   LOG_PATH: "docker_data/logs/out.log"
   NORMALISATION: true
   VERBOSE: false
+  PARAMS:
+    mcq_threshold: 20
+    mcq_mode: 2
   ALL_SCORES: ALL
   SORT_BY: RMSD
