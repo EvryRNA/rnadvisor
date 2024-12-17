@@ -6,7 +6,7 @@ from typing import Optional, Dict
 import os
 os.environ["TOKENIZERS_PARALLELISM"]="false"
 
-model_name = "lib/rna_torsionbert"
+model_name = "sayby/rna_torsionBERT"
 tokenizer = AutoTokenizer.from_pretrained(
     model_name, trust_remote_code=True
 )

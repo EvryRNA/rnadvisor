@@ -48,14 +48,12 @@ compute_scores:
 .PHONY: docker_start
 docker_start:
 	docker build -t rnadvisor --target release .
-	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v \
-		${PWD}/config.yaml:/app/config.yaml -v ${PWD}/lib/rna_torsionbert:/app/lib/rna_torsionbert rnadvisor --config_path=./config.yaml
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor --config_path=./config.yaml
 
 .PHONY: docker_interactive
 docker_interactive:
 	docker build -t rnadvisor_dev --target dev .
-	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml -v \
-		${PWD}/lib/rna_torsionbert:/app/lib/rna_torsionbert rnadvisor_dev
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor_dev
 
 .PHONY: clean
 clean:

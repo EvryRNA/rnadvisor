@@ -78,7 +78,7 @@ RUN cd lib/rs_rnasp ; make build
 RUN make install_barnaba
 RUN make install_cg_rnasp
 RUN make install_usalign
-RUN pip install --no-cache-dir -r requirements.txt
+RUN #pip install --no-cache-dir -r requirements.txt
 RUN ulimit -c unlimited # To enable MCQ4structures to run well
 RUN echo "" > lib/__init__.py
 # Install Java
@@ -93,10 +93,12 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* \
 # Add pytorch CPU
-RUN pip install torch==2.2.0+cpu torchvision==0.10.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+RUN #pip install loguru tqdm transformers biopython mdtraj
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install torch==2.2.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 COPY . .
 RUN python3 tests/test_tf.py # To download the model weights for TB-MCQ
-CMD /bin/bash
+CMD ["python3", "-m", "src.rnadvisor_cli"]
 
 
 FROM release as dev

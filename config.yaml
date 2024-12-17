@@ -12,7 +12,7 @@ SCORE_HP:
   ALL_SCORES:
     - RMSD
     - P-VALUE
-    -INF
+    - INF
     - DI
     - MCQ
     - GDT-TS
