@@ -1,4 +1,5 @@
 """Class that wraps all the scores into one interface"""
+
 import os
 from abc import abstractmethod
 from typing import Dict, List, Optional, Tuple
@@ -23,7 +24,7 @@ class ScoreAbstract:
         self.native_path = native_path
 
     def compute(
-        self, pred_paths: Optional[List[str]], native_path: Optional[str]
+        self, pred_paths: Optional[List[str]], native_path: Optional[str], *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the given score for the list of predictions, and give the computation time.
@@ -39,7 +40,7 @@ class ScoreAbstract:
         times: Dict = {}
         for sub_path in pred_paths:
             if self.check_pdb_file(in_path=sub_path):
-                c_scores, c_times = self._compute(sub_path, native_path)
+                c_scores, c_times = self._compute(sub_path, native_path, *args, **kwargs)
                 for score_n, score in c_scores.items():
                     if sub_path in scores:
                         scores[sub_path][score_n] = score
@@ -61,7 +62,7 @@ class ScoreAbstract:
         return os.path.exists(in_path) and in_path.endswith(".pdb")
 
     @abstractmethod
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the score for a given prediction and the native .pdb path.
         It returns also the time needed to compute the score.

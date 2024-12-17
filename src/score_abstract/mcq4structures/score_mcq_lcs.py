@@ -29,6 +29,8 @@ class ScoreMCQLCS(ScoreAbstract):
         native_path: str,
         mcq_bin_path: Optional[str] = None,
         mcq_threshold: float = 25,
+        *args,
+        **kwargs,
     ) -> Tuple[float, float]:
         """
         Compute the LCS-TA metric (using the mcq-lcs of the mcq4structures code)
@@ -64,16 +66,24 @@ class ScoreMCQLCS(ScoreAbstract):
             lcs_coverage, nb_residue = np.nan, np.nan
         return lcs_coverage, nb_residue  # type: ignore
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(
+        self, pred_path: str, native_path: str, mcq_threshold: float = 25, *args, **kwargs
+    ) -> Tuple[Dict, Dict]:
         """
         Compute the LCS-TA metrics for a given prediction and the native .pdb path.
         :param pred_path: the path to the .pdb file of a prediction.
         :param native_path: the path to the .pdb file of the native structure.
+        :param mcq_threshold: threshold used for the computation of the longest sequence
         :return: dictionary with the MCQ score for the given inputs
         """
         time_b = time.time()
-        lcs_coverage, nb_residue = self.compute_mcq_lcs(pred_path, native_path, self.mcq_bin_path)
+        lcs_coverage, nb_residue = self.compute_mcq_lcs(
+            pred_path, native_path, self.mcq_bin_path, mcq_threshold=mcq_threshold, *args, **kwargs
+        )
         time_complete = time.time() - time_b
-        scores = {"LCS-TA-COVERAGE": lcs_coverage, "LCS-TA-RESIDUES": nb_residue}
+        scores = {
+            f"LCS-TA-COVERAGE-{mcq_threshold}": lcs_coverage,
+            f"LCS-TA-RESIDUES-{mcq_threshold}": nb_residue,
+        }
         out_time = {key: time_complete for key in scores}
         return scores, out_time

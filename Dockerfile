@@ -4,13 +4,18 @@ WORKDIR /src/
 COPY Makefile .
 RUN make install_rna_assessment # Git clone RNA_Assessment fork, a pyton code
 
-# Build stage for the MCQ4Structures : a java based code
-FROM maven:3.9.0 AS mcq4structures
-WORKDIR /src/
-COPY Makefile .
-# Clone the repo and install the dependencies using the pom.xml file
-RUN apt-get update && apt-get install make
-RUN make install_mcq
+FROM maven:3.8.7-openjdk-18-slim AS mcq_dependencies
+WORKDIR /app
+RUN apt-get update && apt-get install -y git
+RUN mkdir lib && git clone https://github.com/tzok/mcq4structures.git ./lib/mcq4structures
+RUN mvn -B package --file lib/mcq4structures/pom.xml
+
+FROM maven:3.8.7-openjdk-18-slim AS mcq_builder
+WORKDIR /app
+COPY --from=mcq_dependencies /root/.m2 /root/.m2
+COPY --from=mcq_dependencies /app/ /app/
+RUN mvn -B -e clean install --file lib/mcq4structures/pom.xml
+
 
 # Build stage for the Zhanglab group : a C++ based code
 FROM gcc:9.5.0 AS zhanglab
@@ -45,7 +50,6 @@ RUN pip3 install -r post_requirements.txt
 RUN pip3 install torch-scatter==2.0.5 -f https://pytorch-geometric.com/whl/torch-1.5.0+cu102.html
 
 
-
 # Final stage for the scoring process, using the previous build stages
 FROM registry.scicore.unibas.ch/schwede/openstructure as release
 WORKDIR /app/
@@ -54,29 +58,17 @@ COPY requirements.txt .
 # Copy the python code from RNA_Assessment and MC-Annotate binary file
 COPY --from=rna_assessment /src/lib/rna_assessment ./lib/rna_assessment
 COPY --from=zhanglab /src/lib/zhanggroup/ ./lib/zhanggroup
-# Copy the codes for ARES
-COPY --from=ares /app/ ./lib/ares/
-COPY --from=ares /venv /venv
+COPY --from=mcq_builder /app/lib/mcq4structures/*.jar /app/lib/mcq4structures/app.jar
+COPY --from=mcq_builder /app/lib/mcq4structures /app/lib/mcq4structures
 
 ENV RASP=/app/lib/rasp
 ENV DFIRE_RNA_HOME=/app/lib/dfire
 ENV JAVA_HOME='/opt/jdk-17'
 ENV PATH="$JAVA_HOME/bin:$PATH"
 ENV PATH=/venv/bin:$PATH
-# Install missing requirements
-COPY Makefile .
 RUN apt-get update &&\
-    apt install maven -y  && \
-    apt-get install -y --no-install-recommends default-jre-headless make git software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa -y && \
-    apt-get update && \
-    apt-get install -y python3.8 python3-pip python3.8-dev python3.8-venv
-RUN python3.8 -m venv /venv
-RUN pip3 install --upgrade pip
-
-RUN pip install -e lib/ares/e3nn_ares
-RUN pip install -r requirements.txt
-
+    apt-get install -y --no-install-recommends make git software-properties-common
+COPY Makefile .
 RUN make install_dfire
 RUN cd lib/dfire ; make
 RUN make install_rasp
@@ -85,16 +77,26 @@ RUN make install_rs_rnasp
 RUN cd lib/rs_rnasp ; make build
 RUN make install_barnaba
 RUN make install_cg_rnasp
-
+RUN make install_usalign
+RUN #pip install --no-cache-dir -r requirements.txt
 RUN ulimit -c unlimited # To enable MCQ4structures to run well
 RUN echo "" > lib/__init__.py
-# Install Java 17 for MCQ4Structures
-RUN wget https://download.java.net/openjdk/jdk17/ri/openjdk-17+35_linux-x64_bin.tar.gz && \
-    tar -xvf openjdk-17+35_linux-x64_bin.tar.gz && \
-    mv jdk-17 /opt/ && \
-    rm openjdk-17+35_linux-x64_bin.tar.gz
-RUN rm -rf /var/lib/apt/lists/*
-# Copy the needed files
+# Install Java
+ENV JAVA_VERSION=18 \
+    JAVA_HOME=/usr/lib/jvm/java-18-openjdk-amd64
+RUN apt-get update && \
+    apt-get install -y wget gnupg software-properties-common && \
+    wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | apt-key add - && \
+    add-apt-repository -y https://packages.adoptium.net/artifactory/deb && \
+    apt-get update && \
+    apt-get install -y openjdk-18-jdk && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+# Add pytorch CPU
+RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install torch==2.2.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
+COPY tests/test_tf.py tests/test_tf.py
+RUN python3 tests/test_tf.py # To download the model weights for TB-MCQ
 COPY . .
 ENTRYPOINT ["python3", "-m", "src.rnadvisor_cli"]
 

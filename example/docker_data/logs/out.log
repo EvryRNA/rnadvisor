@@ -1,0 +1,26 @@
+2024-05-14 09:05:57.817 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR RMSD : 1.13295 seconds
+2024-05-14 09:05:59.410 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR P-VALUE : 0.91307 seconds
+2024-05-14 09:06:00.040 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR INF-ALL,INF-WC,INF-NWC,INF-STACK : 0.05971 seconds
+2024-05-14 09:06:01.595 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR DI : 1.01326 seconds
+2024-05-14 09:06:01.914 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR MCQ : 0.3173 seconds
+2024-05-14 09:06:02.287 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8 : 1.85479 seconds
+2024-05-14 09:07:11.116 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR CAD : 68.8262 seconds
+2024-05-14 09:07:25.830 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR RASP-ENERGY,RASP-NB-CONTACTS,RASP-NORMALIZED-ENERGY : 44.126 seconds
+2024-05-14 09:07:25.868 | DEBUG    | src.score_abstract.score_rna_assessment.score_clash:compute_clash_score:75 - Zero division in CLASH score : tmp/inputs/normalized_alphafold3_19US_5.pdb, 0, 0
+2024-05-14 09:07:25.888 | DEBUG    | src.score_abstract.score_rna_assessment.score_clash:compute_clash_score:75 - Zero division in CLASH score : tmp/inputs/normalized_alphafold3_19US_4.pdb, 0, 0
+2024-05-14 09:07:25.907 | DEBUG    | src.score_abstract.score_rna_assessment.score_clash:compute_clash_score:75 - Zero division in CLASH score : tmp/inputs/normalized_alphafold3_19US_3.pdb, 0, 0
+2024-05-14 09:07:25.927 | DEBUG    | src.score_abstract.score_rna_assessment.score_clash:compute_clash_score:75 - Zero division in CLASH score : tmp/inputs/normalized_alphafold3_19US_2.pdb, 0, 0
+2024-05-14 09:07:25.946 | DEBUG    | src.score_abstract.score_rna_assessment.score_clash:compute_clash_score:75 - Zero division in CLASH score : tmp/inputs/normalized_alphafold3_19US_1.pdb, 0, 0
+2024-05-14 09:07:25.947 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR CLASH : 0.11394 seconds
+2024-05-14 09:07:30.915 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR BARNABA-RMSD,BARNABA-eRMSD,BARNABA-eSCORE : 4.9656 seconds
+2024-05-14 09:07:36.135 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR DFIRE : 5.21878 seconds
+2024-05-14 09:08:05.941 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR rsRNASP : 29.80331 seconds
+2024-05-14 09:08:18.735 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR lDDT : 12.79001 seconds
+2024-05-14 09:08:25.211 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR TM-score : 6.47247 seconds
+2024-05-14 09:08:30.887 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR QS-score : 5.67305 seconds
+2024-05-14 09:12:05.217 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR ARES : 214.32766 seconds
+2024-05-14 09:12:06.402 | DEBUG    | __main__:log_current_time:410 - TIME SPEND FOR LCS-TA-COVERAGE,LCS-TA-RESIDUES : 2.36294 seconds
+2024-05-14 09:12:06.410 | INFO     | __main__:compute_scores:447 - RESULTS SORTED BY RMSD
+2024-05-14 09:12:06.436 | SUCCESS  | __main__:_save_scores:481 - Results SAVED AT docker_data/output/1U9S_alphafold.csv
+2024-05-14 09:12:06.440 | SUCCESS  | __main__:_save_scores:481 - Times SAVED AT docker_data/output/time_rp03.csv
+2024-05-14 09:12:06.441 | SUCCESS  | __main__:compute_scores:453 - LOG PATH SAVED AT : docker_data/logs/out.log

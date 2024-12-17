@@ -7,6 +7,7 @@ Capriotti E, Norambuena T, Marti-Renom MA, Melo F.
 (2011) All-atom knowledge-based potential for RNA structure prediction and assessment.
 Bioinformatics 27(8):1086-93
 """
+
 import os
 import subprocess
 import time
@@ -47,7 +48,7 @@ class ScoreRASP(ScoreAbstract):
         rasp = [float(score) for score in rasp]  # type: ignore
         return rasp
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         time_b = time.time()
         energy_score, nb_contacts, normalized_energy = self.compute_rasp(
             pred_path, self.rasp_bin_path

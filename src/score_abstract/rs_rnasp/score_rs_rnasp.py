@@ -13,6 +13,7 @@ Tan YL, Wang X, Shi YZ, Zhang W, Tan ZJ.
 rsRNASP: A residue-separation-based statistical potential for RNA 3D structure
 evaluation. Biophys J. 121: 142-156.
 """
+
 import os
 import subprocess
 from typing import Dict, List, Optional, Tuple
@@ -50,6 +51,6 @@ class ScoreRsRNASP(ScoreAbstract):
         return rs_rnasp  # type: ignore
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         rs_rnasp = self.compute_rs_rnasp(pred_path, self.rs_rnasp_bin_path)
         return {"rsRNASP": rs_rnasp}  # type: ignore

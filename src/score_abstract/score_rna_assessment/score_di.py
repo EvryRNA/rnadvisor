@@ -2,6 +2,7 @@
 Class that implements the Deformation Index score.
 It uses the RNA_Assessment repo.
 """
+
 from typing import Dict, Optional, Tuple
 
 import numpy as np

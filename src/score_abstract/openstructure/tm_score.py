@@ -13,7 +13,7 @@ class TMScore(AbstractOST):
         super(TMScore, self).__init__(*args, **kwargs)
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the TM-score for a single prediction.
         :param pred_path: the path to the .pdb file of a prediction.
@@ -21,7 +21,7 @@ class TMScore(AbstractOST):
         :return: the TM-score
         """
         tm_score = self.compute_tm_score(pred_path, native_path)
-        return {"TM-score": tm_score}  # type: ignore
+        return {"TM-score (OST)": tm_score}  # type: ignore
 
     @staticmethod
     def compute_tm_score(pred_path: str, native_path: str) -> float:

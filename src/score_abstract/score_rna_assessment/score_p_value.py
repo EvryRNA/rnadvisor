@@ -10,6 +10,7 @@ They suggest the following rule:
 They also explain that the P-value with their formula makes sense for RNAs sequence between
                 35 and 161 nucleotides.
 """
+
 from typing import Dict, Optional, Tuple
 
 import numpy as np

@@ -4,7 +4,7 @@
 </h1>
 
 
-![img](img/rnadvisor_schema.png)
+![img](img/RNAdvisor_page.gif)
 
 
 This depo summarises different implementations of scoring function for 3D structures of RNA
@@ -19,17 +19,17 @@ It takes as inputs a `.pdb` file of predicted 3D structures (or a folder of `.pd
 It uses the following repositories: 
 
 - [RNA_Assessment](https://github.com/RNA-Puzzles/RNA_assessment): a python repository that computes [RMSD](#rmsd), [P-VALUE](#p-value), [INF](#inf), and [DI](#di). 
-
     I forked the project because I did some modifications, leading to use the following implementation of [RNA_Assessment-forked](https://github.com/clementbernardd/RNA_assessment/tree/scoring-version)
 - [MCQ4Structures](https://github.com/tzok/mcq4structures) : a java code that computes the [MCQ](#mcq) score. 
 - [Voronota](https://github.com/kliment-olechnovic/voronota): a C++ code that computes the [CAD](#cad) score. 
-- [Zhanglab](https://zhanggroup.org/TM-score/): a complete website to compute multiple scores, such as the [GDT-TS](#gdt-ts) scores.
+- [Zhanglab](https://zhanggroup.org/TM-score/): a complete website to compute multiple scores, such as the [GDT-TS](#gdt-ts) or [TM-score](#tm-score) scores.
 - [BaRNAba](https://github.com/srnas/barnaba): an implementation of the eRMSD and eSCORE. I created a fork version of [BaRNAba-forked](https://github.com/clementbernardd/barnaba/tree/scoring-version).
 - [DFIRE](https://github.com/tcgriffith/dfire_rna): an implementation of the DFIRE energy function. 
 - [RASP](http://melolab.org/webrasp/download.php): an implementation of the RASP energy function. I created a fork version of [RASP-forked](https://github.com/clementbernardd/rasp_rna)
 - [rsRNASP](https://github.com/Tan-group/rsRNASP): a Python implementation of the rsRNASP score. I created a fork version of [rsRNASP-forked](https://github.com/clementbernardd/rsRNASP/tree/scoring-version) with only the needed files.
 - [OpenStructure](https://git.scicore.unibas.ch/schwede/openstructure): a C++ and Python implementation for structure analysis. It is used to compute [TM-score](#tm-score) and [lDDT]($lddt) metrics. 
-
+- [CGRNASP](https://github.com/Tan-group/cgRNASP): a C implementation for the computation of CG-RNASP potentials. I created a fork version of [CGRNASP-forked](https://github.com/clementbernardd/cgrnasp_fork.git). 
+- [TB-MCQ](https://github.com/EvryRNA/RNA-TorsionBERT): a python implementation of the TB-MCQ score. It uses predicted torsional angles from a language-based model to compute the MCQ score with the inferred angles from a given structure.
 
 Note that all these repositories are implementing a lot of different functions. For the sake of this project, I just took what seemed to be the most relevant for the scoring of 3D structures. 
 
@@ -58,15 +58,14 @@ If you want to manually build and run the docker, you can see the details in the
 
 Note that the `Dockerfile` contains multiple stage (one stage for each repo), so you need to build to final stage (called `release`, and `dev` for the dev stage):
 ```
-docker build -t rna_scores --target release .
+docker build -t rnadvisor --target release .
 ```
 
 Then, as the entrypoint in the `Dockerfile` is `python -m src.rnadvisor_cli`, you just need to provide the arguments for the commands in the running process:
 ```
-docker run -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp rna_scores --config_path=./config.yaml
+docker run -it -v ${PWD}/docker_data/:/app/docker_data rnadvisor --config_path=./config.yaml
 ```
 Note that there are mounted volumes to ensure that the inputs can be read by the container.
-
 
 
 ### Parameters
@@ -75,38 +74,39 @@ Note that there are mounted volumes to ensure that the inputs can be read by the
 Here are the different parameters found in the `config.yaml`: 
 
 ```yaml
-BIN_PATHS:
-  # Bin paths: nothing to change if you follow the installation instructions
-  RNA_ASSESSMENT: "lib/rna_assessment/MC-Annotate"
-  ZHANG_GROUP: "lib/zhanggroup/TMscore"
-  DFIRE: "lib/dfire/bin/DFIRE_RNA"
-  MCQ4STRUCTURES: "lib/mcq4structures/mcq-cli/mcq-local"
-  RASP: "lib/rasp/bin/rasp_fd"
-  rsRNASP: "lib/rs_rnasp/rsRNASP"
 SCORE_HP:
   PRED_PATH: "docker_data/input/MODEL_1"
   NATIVE_PATH: "docker_data/input/NATIVE/1Z43.pdb"
-  RESULT_PATH: "docker_data/output/test_scores.csv"
-  TIME_PATH: "docker_data/output/time_score.csv"
-  LOG_PATH: "docker_data/log/out.log"
+  RESULT_PATH: "docker_data/output/1Z43.csv"
+  TIME_PATH: "docker_data/output/time_1Z43.csv"
+  LOG_PATH: "docker_data/output/log_1Z43.log"
   NORMALISATION: true
-  SORT_BY: RMSD
   VERBOSE: false
+  PARAMS:
+    mcq_threshold: 20
+    mcq_mode: 2
   ALL_SCORES:
+    # Metrics
     - RMSD
     - P-VALUE
     - INF
     - DI
     - MCQ
-    - TM-SCORE
+    - GDT-TS
     - CAD
-    - RASP
-    - CLASH
+    - lDDT
+    - TM-SCORE (OST)
+    - TM-SCORE # This version is faster
+    - QS-SCORE
+    - LCS-TA
     - BARNABA
+    # Scoring functions
+    - RASP
     - DFIRE
     - rsRNASP
-    - lDDT
-    - QS-SCORE
+    - CGRNASP
+    - TB-MCQ
+  SORT_BY: RMSD
 ```
 
 Note that the variables in the `BIN_PATH` are the default values when you install the code using the provided installation scripts.
@@ -120,7 +120,8 @@ For the `Score_HP`, the variables are the ones to provide for the python script:
 - `VERBOSE`: whether to print the debug logs in the console
 - `NORMALISATION`: whether to normalise the `.pdb` files (it uses the normalisation from `RNA_Assessment`)
 - `SORT_BY`: whether the user wants to sort the result by one of the metric. It could be `RMSD`, `P-VALUE`, `INF-ALL`, `INF-WC`, `INF-NWC`, `INF-STACK`, `DI`, `MCQ`, `TM-SCORE`, `GDT-TS`, `GDT-TS@1`, `GDT-TS@2`, `GDT-TS@4`,`GDT-TS@8` or `CAD`.
-- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT` and `CAD`. Note that there is also available the `QS-score`. 
+- `ALL_SCORES`: a list of scores to compute. It can be `RMSD`, `P-VALUE`, `INF`, `DI`, `MCQ`, `TM-SCORE`, `lDDT`, `CAD`, `LCS-TA` or `BARNABA`. Note that there is also available the `QS-score`. 
+Scoring functions are also available: `BARNABA`, `DFIRE`, `rsRNASP`, `RASP`, `CGRNASP` and `TB-MCQ`.
 
 ### Scenario
 
@@ -138,7 +139,7 @@ These scenarios can be computed by changing the `ALL_SCORES` parameters in the c
 If you want to use the command lines, here are the option available to run the script : 
 ```
 python -m src.rnadvisor_cli --pred_path --native_path --result_path --time_path --log_path
-          [--all_scores] [--config_path] [--no_normalisation] [--sort_by] [--verbose]
+          [--all_scores] [--config_path] [--no_normalisation] [--sort_by] [--verbose] [--params]
 ```
 with: 
 ```
@@ -152,10 +153,13 @@ arguments:
   --all_scores          List of the scores to use, separated by a comma. 
                         If you want to use them all, use `ALL`. To use all the metrics, use `METRICS`
                         To use all the energies, use `ENERGIES`.
-                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,lDDT,RASP,CLASH,BARNABA,DFIRE,rsRNASP.
+                        Choice between RMSD,P-VALUE,INF,DI,MCQ,TM-SCORE,CAD,lDDT,RASP,CLASH,BARNABA,DFIRE,rsRNASP,TB-MCQ,CGRNASP.
   --no-normalisation    If the user doesn't want to normalise the .pdb files. 
   --sort-by             Metric to sort the results by. Choice between RMSD,P-VALUE,INF-ALL,INF-WC,INF-NWC,INF-STACK,DI,MCQ,TM-SCORE,GDT-TS,GDT-TS@1,GDT-TS@2,GDT-TS@4,GDT-TS@8,CAD,lDDT,RASP,BARNABA,DFIRE,rsRNASP.
   --config_path         Path to the config.yaml file with the different parameters.
+  --params              Hyperparameters of the different methods. It could be used to set the threshold for LCS-TA 
+   or parameters of MCQ using `--params='{"mcq_threshold": 10, "mcq_mode": 2}'`. Values for `mcq_threshold` are 10, 15, 20 or 25 and values for 
+    `mcq_mode` are 0 (relaxed), 1 (comparison without violations) or 2 (comparison of everything regardless violations).
 ```
 
 If you use the `config_path`, it will not take into account the other parameters (and only take into account what is specified in the `config.yaml` file)

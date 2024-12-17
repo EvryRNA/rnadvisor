@@ -1,5 +1,7 @@
 """Class that convert the scoring class to command line. It predicts the scores from .pdb files."""
+
 import argparse
+import ast
 import os.path
 import sys
 from datetime import datetime
@@ -19,7 +21,7 @@ from src.enum import (
     DISTINCT_METRICS,
 )
 from src.score_abstract.score_abstract import ScoreAbstract
-from src.utils import read_yaml_to_dict
+from src.utils import read_yaml_to_dict, convert_cif_to_pdb
 
 
 class ScoreCLI:
@@ -34,6 +36,7 @@ class ScoreCLI:
         time_path: Optional[str] = None,
         verbose: bool = False,
         log_path: Optional[str] = "out.log",
+        hp_params: str = "{}",
         *args,
         **kwargs,
     ):
@@ -49,6 +52,7 @@ class ScoreCLI:
         :param time_path: path to a file where to store the time taken to compute the scores
         :param verbose: whether to print the logs or not
         :param log_path: path where are stored the different logs
+        :param hp_params: parameters to add to the computation of the different scoring functions/metrics
         """
         self._init_logger(verbose, log_path)
         self.normalise = normalise
@@ -59,6 +63,19 @@ class ScoreCLI:
         self.sort_by = sort_by
         self.time_path = time_path
         self.log_path = log_path
+        self.hp_params = self._init_hp_params(hp_params)
+
+    def _init_hp_params(self, hp_params: Union[Dict, str]) -> Dict:
+        """
+        Convert the params from command line to dictionary of parameters
+        :param hp_params: dictionary of parameters. If it comes from command line, this is a string
+        to convert to dictionary.
+        """
+        if isinstance(hp_params, str):
+            dict_params = ast.literal_eval(hp_params)
+        else:
+            dict_params = hp_params
+        return dict_params
 
     def _init_logger(self, verbose: bool, log_path: Optional[str]):
         """
@@ -147,6 +164,10 @@ class ScoreCLI:
         if not os.path.exists(native_path):
             # The path doesn't exist
             error_msg = "NATIVE PATH DOESN'T EXIST"
+        if native_path.endswith(".cif"):
+            new_native_path = native_path.replace(".cif", ".pdb")
+            convert_cif_to_pdb(native_path, new_native_path)
+            native_path = new_native_path
         if not native_path.endswith(".pdb"):
             # The path isn't a .pdb file
             error_msg = "NATIVE PATH ISN'T A .pdb FILE"
@@ -157,6 +178,22 @@ class ScoreCLI:
         if self.normalise:
             return self._normalise(native_path)
         return native_path
+
+    def _convert_pred_paths_cif_pdb(self, pred_paths: List[str]) -> List[str]:
+        """
+        Convert the .cif files to .pdb if necessary.
+        :param pred_paths: List of either .pdb or .cif files
+        :return: a list of .pdb files where the .cif files are converted into .pdb files
+        """
+        new_paths = []
+        for pred_path in pred_paths:
+            if pred_path.endswith(".cif"):
+                new_path = pred_path.replace(".cif", ".pdb")
+                convert_cif_to_pdb(pred_path, new_path)
+            else:
+                new_path = pred_path
+            new_paths.append(new_path)
+        return new_paths
 
     def _init_pred_path(self, pred_path: str) -> Tuple[List[str], str]:
         """
@@ -180,10 +217,17 @@ class ScoreCLI:
             model_name = os.path.basename(pred_path)
             # Filter the pdb files and add full path
             paths = [
-                os.path.join(pred_path, c_path) for c_path in paths if c_path.endswith(".pdb")
+                os.path.join(pred_path, c_path)
+                for c_path in paths
+                if (c_path.endswith(".pdb") or c_path.endswith(".cif"))
             ]
+            paths = self._convert_pred_paths_cif_pdb(paths)
         elif os.path.isfile(pred_path):
             # Path to one .pdb file
+            if pred_path.endswith(".cif"):
+                new_pred_path = pred_path.replace(".cif", ".pdb")
+                convert_cif_to_pdb(pred_path, new_pred_path)
+                pred_path = new_pred_path
             if not pred_path.endswith(".pdb"):
                 error_msg = "PREDICTION PATH ISN'T .pdb FILE"
                 logger.error(error_msg)
@@ -266,6 +310,13 @@ class ScoreCLI:
             default="out.log",
             type=str,
             help="Path where to save the logs of the program.",
+        )
+        parser.add_argument(
+            "--params",
+            dest="hp_params",
+            default="{}",
+            type=str,
+            help="Parameters for the different metrics/scoring functions",
         )
         return parser.parse_args()
 
@@ -370,13 +421,14 @@ class ScoreCLI:
         yaml_content = read_yaml_to_dict(config_path)
         # Arguments for the CLI
         score_hp = yaml_content.get("SCORE_HP", {})
-        pred_path, native_path, result_path, time_path, verbose, log_path = (
+        pred_path, native_path, result_path, time_path, verbose, log_path, hp_params = (
             score_hp.get("PRED_PATH", None),
             score_hp.get("NATIVE_PATH", None),
             score_hp.get("RESULT_PATH", None),
             score_hp.get("TIME_PATH", None),
             score_hp.get("VERBOSE", False),
             score_hp.get("LOG_PATH", "out.log"),
+            score_hp.get("PARAMS", {}),
         )
         normalise, sort_by = score_hp.get("NORMALISATION", True), score_hp.get("SORT_BY", None)
         all_scores = score_hp.get("ALL_SCORES", None)
@@ -392,6 +444,7 @@ class ScoreCLI:
             "time_path": time_path,
             "verbose": verbose,
             "log_path": log_path,
+            "hp_params": hp_params,
         }
         config = {**bin_paths, **config}
         return config
@@ -417,7 +470,7 @@ class ScoreCLI:
         all_scores, all_names, all_times = {}, [], {}  # type: ignore
         for score_fn in tqdm(self.all_scores):
             try:
-                score, times = score_fn.compute(self.pred_path, self.native_path)
+                score, times = score_fn.compute(self.pred_path, self.native_path, **self.hp_params)
             except TypeError:
                 logger.error(f"Error with {score_fn.__class__.__name__}")
                 continue

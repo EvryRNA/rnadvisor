@@ -13,6 +13,7 @@ cgRNASP: coarse-grained statistical potentials with residue separation
 for RNA structure evaluation.
 NAR Genom Bioinform. 5(1): lqad016.
 """
+
 from typing import Optional, Tuple, Dict
 from src.score_abstract.score_abstract import ScoreAbstract
 from src.utils import fn_time
@@ -90,7 +91,7 @@ class ScoreCGRNASP(ScoreAbstract):
         cgrnasp_pc = output.decode().replace("\n", "").split()[-1]
         return round(float(cgrnasp_pc), 3)
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the cgRNASP, cgRNASP-C and cgRNASP-PC scores.
         """

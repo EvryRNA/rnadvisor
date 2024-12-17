@@ -43,7 +43,7 @@ all_tests: test_static_all test_complexity test_documentation test_unit_coverage
 
 .PHONY: compute_scores
 compute_scores:
-	$(PYTHON) src.rnadvisor_cli --config_path=./config.yaml
+	$(PYTHON) src.rnadvisor_cli --config_path=./config.yaml --params='{"mcq_threshold": 10, "mcq_mode": 2}'
 
 .PHONY: docker_start
 docker_start:
@@ -53,7 +53,7 @@ docker_start:
 .PHONY: docker_interactive
 docker_interactive:
 	docker build -t rnadvisor_dev --target dev .
-	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor_dev
+	docker run --rm -it -v ${PWD}/docker_data/:/app/docker_data -v ${PWD}/tmp:/app/tmp -v ${PWD}/config.yaml:/app/config.yaml rnadvisor_dev
 
 .PHONY: clean
 clean:
@@ -81,6 +81,13 @@ install_zhanggroup:
 	mkdir -p lib/zhanggroup
 	wget -O ./lib/zhanggroup/TMscore.cpp https://zhanggroup.org/TM-score/TMscore.cpp
 
+.PHONY: install_usalign
+install_usalign:
+	mkdir -p lib/zhanggroup
+	wget -O lib/zhanggroup/USalign.cpp https://zhanggroup.org/US-align/bin/module/USalign.cpp
+	g++ -O3 -lm -o lib/zhanggroup/USalign lib/zhanggroup/USalign.cpp
+
+
 ##################################################################################################
 #################### Code from the RNA_Assessment to compute : ###################################
 ############################ RMSD, P-VALUE, INF and DI ###########################################
@@ -101,7 +108,7 @@ install_mcq:
 
 .PHONY: example_mcq
 example_mcq:
-	lib/mcq4structures/mcq-cli/mcq-local -t data/NATIVE/1Z43.pdb -d tmp data/MODEL_2/FARFAR2-1Z43-S_000001_012_0001.pdb | awk '{print ${NF}}'
+	lib/mcq4structures/mcq-cli/mcq-local -t data/NATIVE/1Z43.pdb -d /tmp data/MODEL_2/FARFAR2-1Z43-S_000001_012_0001.pdb | awk '{print ${NF}}'
 
 ##################################################################################################
 ####################### Code from the voronota to compute the CAD score ##########################
@@ -128,7 +135,7 @@ install_rasp:
 install_barnaba:
 	mkdir -p lib/barnaba
 	git clone https://github.com/clementbernardd/barnaba.git --branch scoring-version3.8 lib/barnaba
-	pip install -r lib/barnaba/requirements.txt
+	#pip install -r --no-cache-dir lib/barnaba/requirements.txt
 
 ##################################################################################################
 ################################# Code for DFIRE-RNA #############################################
@@ -158,3 +165,11 @@ install_cg_rnasp:
 	git clone https://github.com/clementbernardd/cgrnasp_fork.git lib/cgRNASP
 	make -C lib/cgRNASP install_all
 
+##################################################################################################
+################################## Code for TB-MCQ ##############################################
+##################################################################################################
+
+.PHONY: install_tb_mcq
+install_tb_mcq:
+	git lfs install
+	git clone https://huggingface.co/sayby/rna_torsionBERT lib/rna_torsionbert

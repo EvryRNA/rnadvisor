@@ -10,6 +10,7 @@ T. Zhang, G. Hu, Y. Yang, J. Wang, and Y. Zhou,
 distance-scaled finite ideal-gas reference state.”,
 J. Computational Biology, in press (2019).
 """
+
 import os
 import subprocess
 from typing import Dict, Optional, Tuple
@@ -24,7 +25,7 @@ class ScoreDfire(ScoreAbstract):
         self.dfire_bin_path = dfire_bin_path
 
     @time_it
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute the dfire score
         :param pred_path: the path to the .pdb file of a prediction.

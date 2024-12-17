@@ -9,6 +9,7 @@ Bottaro, Sandro, Francesco Di Palma, and Giovanni Bussi.
 "The role of nucleobase interactions in RNA structure and dynamics."
 Nucleic acids research 42.21 (2014): 13306-13314.
 """
+
 from typing import Dict, Tuple
 
 import lib.barnaba.barnaba as bb
@@ -75,7 +76,7 @@ class ScoreBarnaba(ScoreAbstract):
         pred_escore = round(pred_escore, 3)
         return pred_escore
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Return the RMSD, eRMSD and eScore from baRNAba implementation
         :param pred_path: the path to the .pdb file of a prediction.

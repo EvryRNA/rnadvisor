@@ -1,6 +1,7 @@
 """
 Class that get and convert the pdb files to structures encoded by RNA-tools.
 """
+
 import os
 from typing import Dict, Optional, Tuple
 
@@ -55,7 +56,7 @@ class ScoreAbstractRnaAssessment(ScoreAbstract):
         """
         raise NotImplementedError
 
-    def _compute(self, pred_path: str, native_path: str) -> Tuple[Dict, Dict]:
+    def _compute(self, pred_path: str, native_path: str, *args, **kwargs) -> Tuple[Dict, Dict]:
         """
         Compute a give score from the prediction and a native structure
         :param pred_path: the path to the .pdb file of a prediction.
