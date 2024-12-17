@@ -98,7 +98,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install torch==2.2.0+cpu -f https://download.pytorch.org/whl/cpu/torch_stable.html
 COPY . .
 RUN python3 tests/test_tf.py # To download the model weights for TB-MCQ
-CMD ["python3", "-m", "src.rnadvisor_cli"]
+ENTRYPOINT ["python3", "-m", "src.rnadvisor_cli"]
 
 
 FROM release as dev
