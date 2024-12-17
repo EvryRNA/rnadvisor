@@ -4,7 +4,7 @@
 </h1>
 
 
-![img](img/rnadvisor_schema.png)
+![img](img/RNAdvisor_page.gif)
 
 
 This depo summarises different implementations of scoring function for 3D structures of RNA
