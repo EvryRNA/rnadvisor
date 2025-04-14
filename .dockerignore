@@ -1,0 +1,12 @@
+data/*
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.ipynb
+*.log
+*.csv
+tests/
+.git/
+!data/example/

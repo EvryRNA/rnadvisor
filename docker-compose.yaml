@@ -1,0 +1,67 @@
+services:
+  tb_mcq:
+    build:
+      context: .
+      dockerfile: dockerfiles/tb_mcq.dockerfile
+    image: tb_mcq_image
+    container_name: tb_mcq_container
+  clash:
+    build:
+      context: .
+      dockerfile: dockerfiles/clash.dockerfile
+    image: clash_image
+    container_name: clash_container
+  pamnet:
+    build:
+      context: .
+      dockerfile: dockerfiles/pamnet.dockerfile
+    image: pamnet_image
+    platform: linux/amd64
+    container_name: pamnet_container
+  lociparse:
+    build:
+      context: .
+      dockerfile: dockerfiles/lociparse.dockerfile
+    image: lociparse_image
+    container_name: lociparse_container
+  3drnascore:
+    build:
+      context: .
+      dockerfile: dockerfiles/rnascore.dockerfile
+    image: 3drnascore_image
+    container_name: 3drnascore_container
+    platform: linux/amd64
+  barnaba:
+    build:
+      context: .
+      dockerfile: dockerfiles/barnaba.dockerfile
+    image: barnaba_image
+    container_name: barnaba_container
+    platform: linux/amd64
+  cgrnasp:
+    build:
+      context: .
+      dockerfile: dockerfiles/cgrnasp.dockerfile
+    image: cgrnasp_image
+    container_name: cgrnasp_container
+  dfire:
+    build:
+      context: .
+      dockerfile: dockerfiles/dfire.dockerfile
+    image: dfire_image
+    container_name: dfire_container
+  mcq:
+    build:
+      context: .
+      dockerfile: dockerfiles/mcq.dockerfile
+      target: mcq
+    image: mcq_image
+    container_name: mcq_container
+  lcs:
+    build:
+      context: .
+      dockerfile: dockerfiles/mcq.dockerfile
+      target: mcq
+    image: lcs_image
+    container_name: lcs_container
+    entrypoint: python -m rnadvisor.metric.mcq4structures.lcs_helper

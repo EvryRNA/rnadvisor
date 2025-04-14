@@ -1,0 +1,53 @@
+services:
+  lociparse:
+    image: lociparse_slim
+    container_name: lociparse_slim_container
+    volumes:
+      - ./data:/app/data
+  3drnascore:
+    image: 3drnascore_slim
+    container_name: 3drnascore_slim_container
+    platform: linux/amd64
+    volumes:
+      - ./data:/app/data
+  tb_mcq:
+    image: tb_mcq_slim
+    container_name: tb_mcq_slim_container
+    volumes:
+      - ./data:/app/data
+  clash:
+    image: clash_slim
+    container_name: clash_slim_container
+    volumes:
+      - ./data:/app/data
+  pamnet:
+    image: pamnet_slim
+    container_name: pamnet_container
+    volumes:
+      - ./data:/app/data
+  barnaba:
+    image: barnaba_slim
+    container_name: barnaba_container
+    volumes:
+      - ./data:/app/data
+  cgrnasp:
+    image: cgrnasp_slim
+    container_name: cgrnasp_container
+    volumes:
+      - ./data:/app/data
+  dfire:
+    image: dfire_slim
+    container_name: dfire_container
+    volumes:
+      - ./data:/app/data
+  mcq:
+    image: mcq_slim
+    container_name: mcq_container
+    volumes:
+      - ./data:/app/data
+  lcs:
+    image: lcs_slim
+    container_name: lcs_container
+    volumes:
+      - ./data:/app/data
+    entrypoint: python -m rnadvisor.metric.mcq4structures.lcs_helper

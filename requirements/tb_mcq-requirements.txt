@@ -1,0 +1,2 @@
+torch>=2.1
+rna-torsionbert>=0.1.3

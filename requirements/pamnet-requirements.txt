@@ -1,0 +1,16 @@
+numpy==1.20.0
+scikit-learn==0.24.1
+scipy==1.7.3
+sympy==1.6
+pandas
+click
+tqdm
+loguru
+
+git+https://github.com/ildoonet/pytorch-gradual-warmup-lr.git
+
+rdkit-pypi==2021.9.4
+
+typing-extensions==4.7.1
+networkx==2.6.3
+
