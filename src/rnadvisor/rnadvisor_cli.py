@@ -13,6 +13,8 @@ from rnadvisor.enums.list_dockers import SERVICES, SERVICES_DICT
 
 from rnadvisor.enums.list_dockers import OUT_DIR_SCORES,OUT_DIR_TIMES,OUT_DIR
 
+from rnadvisor.enums.list_dockers import ALL, ALL_METRICS, ALL_SF
+
 
 @dataclass
 class RNAdvisorCLI:
@@ -39,12 +41,24 @@ class RNAdvisorCLI:
 
     def check_scores(self, scores: List[str]) -> List[str]:
         """
-        Check the given metrics/scoring functions to use
-        :param scores: list of metrics/scoring functions to use
-        :return: list of metrics/scoring functions that can be used
+        Check the given metrics/scoring functions to use.
+        :param scores: list of metrics/scoring functions to use, or keywords like "ALL", "METRICS", "SF"
+        :return: list of valid metrics/scoring functions that can be used
         """
-        scores = [score.lower() for score in scores]
-        return [score for score in scores if score in SERVICES]
+        expanded_scores = []
+        for score in scores:
+            score_lower = score.lower()
+            if score_lower == "all":
+                expanded_scores.extend(ALL)
+            elif score_lower == "metrics":
+                expanded_scores.extend(ALL_METRICS)
+            elif score_lower == "sf":
+                expanded_scores.extend(ALL_SF)
+            else:
+                expanded_scores.append(score_lower)
+        # Make the list unique and filter valid scores
+        unique_scores = list(set(expanded_scores))
+        return [score for score in unique_scores if score in SERVICES]
 
     def check_init_paths(self, native_path: Optional[str], pred_dir: Optional[str]):
         """
@@ -88,7 +102,7 @@ class RNAdvisorCLI:
         """
         processes = []
         for service, config in services.items():
-            cmd = ["docker", "compose", "run", "--rm", service]
+            cmd = ["docker", "compose", "-f", "docker-compose.slim.yaml", "run", "--rm", service]
             for key, val in config["args"].items():
                 cmd += [key, val]
             cmd+=["--quiet"]
@@ -151,14 +165,15 @@ class RNAdvisorCLI:
         """
         Ensure all Docker images are built before running services.
         """
-        logger.info("🔧 Building Docker images (if needed)...")
-        result = subprocess.run(["docker", "compose", "build"], capture_output=True, text=True)
-        if result.returncode != 0:
-            logger.error("❌ Failed to build Docker images")
-            logger.error(result.stderr)
-            logger.error(result.stdout)
-            sys.exit(1)
-        logger.info("✅ Docker images are ready.")
+        return None
+        # logger.info("🔧 Building Docker images (if needed)...")
+        # result = subprocess.run(["docker", "compose", "build"], capture_output=True, text=True)
+        # if result.returncode != 0:
+        #     logger.error("❌ Failed to build Docker images")
+        #     logger.error(result.stderr)
+        #     logger.error(result.stdout)
+        #     sys.exit(1)
+        # logger.info("✅ Docker images are ready.")
 
     def predict(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """

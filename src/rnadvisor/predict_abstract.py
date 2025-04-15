@@ -79,11 +79,15 @@ class PredictAbstract:
         if out_path is None:
             logger.warning("No output path provided. Predictions will not be saved.")
         else:
-            os.makedirs(os.path.dirname(out_path), exist_ok=True)
+            dir_name = os.path.dirname(out_path)
+            if dir_name:
+                os.makedirs(dir_name, exist_ok=True)
         if out_time_path is None:
             logger.warning("No output time path provided. Time will not be saved.")
         else:
-            os.makedirs(os.path.dirname(out_time_path), exist_ok=True)
+            dir_name = os.path.dirname(out_time_path)
+            if dir_name:
+                os.makedirs(dir_name, exist_ok=True)
         return native_path, pred_paths, out_path, out_time_path
 
     def predict_dir(self, native_path: Optional[str], pred_dir: Optional[str], out_path: Optional[str],
@@ -124,9 +128,9 @@ class PredictAbstract:
         scores_df = pd.DataFrame(scores)
         times_df = pd.DataFrame(times)
         logger.info(f"Saving predictions to {out_path}")
-        scores_df.to_csv(out_path, index=False)
+        scores_df.to_csv(out_path, index=False, float_format="%.3f")
         logger.info(f"Saving time to {out_time_path}")
-        times_df.to_csv(out_time_path, index=False)
+        times_df.to_csv(out_time_path, index=False, float_format="%.3f")
 
     @time_it
     def predict_single_file(self, native_path: Optional[str], pred_path: str, *args, **kwargs) -> Dict:

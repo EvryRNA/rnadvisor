@@ -14,7 +14,7 @@ build-slim IMAGE EXEC_PATH TAG:
 	  --continue-after=exec \
 	  --include-path /usr/local/lib/python3.10/site-packages/torch/bin/torch_shm_manager \
 	  --include-path /usr/local/lib/python3.7/site-packages/torch/bin/torch_shm_manager \
-	  --exec "python -m {{EXEC_PATH}} --pred_dir=data/example/PREDS --native_path=data/example/NATIVE/R1107.pdb"
+	  --exec "python3 -m {{EXEC_PATH}} --pred_dir=data/example/PREDS --native_path=data/example/NATIVE/R1107.pdb"
 
 run-slim SERVICE EXEC_NAME:
 	docker compose -f docker-compose.slim.yaml run --rm {{SERVICE}} \
@@ -112,3 +112,111 @@ build-lcs-slim: build-lcs-full
 
 run-lcs-slim:
 	just run-slim "lcs" "lcs"
+
+build-lddt-full:
+	just build-full "lddt"
+
+build-lddt-slim: build-lddt-full
+	just build-slim "lddt_image" "rnadvisor.metric.open_structures.lddt_helper" "lddt_slim"
+
+run-lddt-slim:
+	just run-slim "lddt" "lddt"
+
+build-rasp-full:
+	just build-full "rasp"
+
+build-rasp-slim: build-rasp-full
+	just build-slim "rasp_image" "rnadvisor.scoring_function.rasp.rasp_helper" "rasp_slim"
+
+run-rasp-slim:
+	just run-slim "rasp" "rasp"
+
+build-rs_rnasp-full:
+	just build-full "rs_rnasp"
+
+build-rs_rnasp-slim: build-rasp-full
+	just build-slim "rs_rnasp_image" "rnadvisor.scoring_function.rs_rnasp.rs_rnasp_helper" "rs_rnasp_slim"
+
+run-rs_rnasp-slim:
+	just run-slim "rs_rnasp" "rs_rnasp"
+
+build-rmsd-full:
+	just build-full "rmsd"
+
+build-rmsd-slim: build-rmsd-full
+	just build-slim "rmsd_image" "rnadvisor.metric.rna_assessment.rmsd_helper" "rmsd_slim"
+
+run-rmsd-slim:
+	just run-slim "rmsd" "rmsd"
+
+build-inf-full:
+	just build-full "inf"
+
+build-inf-slim: build-inf-full
+	just build-slim "inf_image" "rnadvisor.metric.rna_assessment.inf_helper" "inf_slim"
+
+run-inf-slim:
+	just run-slim "inf" "inf"
+
+build-di-full:
+	just build-full "di"
+
+build-di-slim: build-di-full
+	just build-slim "di_image" "rnadvisor.metric.rna_assessment.di_helper" "di_slim"
+
+run-di-slim:
+	just run-slim "di" "di"
+
+build-p_value-full:
+	just build-full "p_value"
+
+build-p_value-slim: build-p_value-full
+	just build-slim "p_value_image" "rnadvisor.metric.rna_assessment.p_value_helper" "p_value_slim"
+
+run-p_value-slim:
+	just run-slim "p_value" "p_value"
+
+build-tm_score-full:
+	just build-full "tm_score"
+
+build-tm_score-slim: build-tm_score-full
+	just build-slim "tm_score_image" "rnadvisor.metric.zhanggroup.tm_score_helper" "tm_score_slim"
+
+run-tm_score-slim:
+	just run-slim "tm_score" "tm_score"
+
+build-cad_score-full:
+	just build-full "cad_score"
+
+build-cad_score-slim: build-cad_score-full
+	just build-slim "cad_score_image" "rnadvisor.metric.voronota.cad_score_helper" "cad_score_slim"
+
+run-cad_score-slim:
+	just run-slim "cad_score" "cad_score"
+
+build-gdt_ts-full:
+	just build-full "gdt_ts"
+
+build-gdt_ts-slim: build-tm_score-full
+	just build-slim "gdt_ts_image" "rnadvisor.metric.zhanggroup.gdt_ts_helper" "gdt_ts_slim"
+
+run-gdt_ts-slim:
+	just run-slim "gdt_ts" "gdt_ts"
+
+build-ares-full:
+	just build-full "ares"
+
+build-ares-slim: build-ares-full
+	just build-slim "ares_image" "rnadvisor.scoring_function.ares.ares_helper" "ares_slim"
+
+run-ares-slim:
+	just run-slim "ares" "ares"
+
+build-rna3dcnn-full:
+	just build-full "rna3dcnn"
+
+build-rna3dcnn-slim: build-rna3dcnn-full
+	just build-slim "rna3dcnn_image" "rnadvisor.scoring_function.rna3dcnn.rna3dcnn_helper" "rna3dcnn_slim"
+
+run-rna3dcnn-slim:
+	just run-slim "rna3dcnn" "rna3dcnn"

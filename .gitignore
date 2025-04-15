@@ -20,3 +20,4 @@ outputs
 logs
 lib
 models
+.DS_Store

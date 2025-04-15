@@ -16,15 +16,13 @@ RUN mkdir -p lib/barnaba && \
     git clone --branch scoring-version3.8 https://github.com/clementbernardd/barnaba.git lib/barnaba
 
 RUN pip install --no-cache-dir -r lib/barnaba/requirements.txt
-CMD ["/bin/bash"]
+COPY requirements/wrapper-requirements.txt wrapper.txt
+RUN pip install --no-cache-dir -r wrapper.txt
 
-#RUN pip install --upgrade pip setuptools wheel
-#RUN pip install lz4==4.3.2
-#RUN pip install "numpy==1.17.3" --no-binary=:all:
+COPY src/rnadvisor /app/rnadvisor
+COPY data/example /app/data/example
 
+RUN find /usr/local/lib/python3.8/site-packages/ -name '*nspkg.pth' -exec rm -v {} +
 
-#COPY src/rnadvisor /app/rnadvisor
-#COPY data/example /app/data/example
-#
-#ENTRYPOINT ["python", "-m", "rnadvisor.metric.barnaba.barnaba_helper"]
-#CMD ["--pred_dir=data/example/PREDS"]
+ENTRYPOINT ["python", "-m", "rnadvisor.metric.barnaba.barnaba_helper"]
+CMD ["--pred_dir=data/example/PREDS", "--native_dir=data.example/NATIVE/R1107.pdb"]

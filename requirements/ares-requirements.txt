@@ -1,0 +1,10 @@
+atom3d==0.2.6
+torch==1.5.0
+python-dotenv==0.18.0
+pytorch-lightning==1.1.5
+wandb==0.10.14
+protobuf==3.20.0
+torch-cluster==1.5.9
+torch-geometric==1.7.2
+torch-sparse==0.6.7
+torch-spline-conv==1.2.1

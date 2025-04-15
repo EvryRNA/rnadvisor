@@ -51,3 +51,66 @@ services:
     volumes:
       - ./data:/app/data
     entrypoint: python -m rnadvisor.metric.mcq4structures.lcs_helper
+  lddt:
+    image: lddt_slim
+    container_name: lddt_container
+    volumes:
+      - ./data:/app/data
+  rasp:
+    image: rasp_slim
+    container_name: rasp_container
+    volumes:
+      - ./data:/app/data
+  rs_rnasp:
+    image: rs_rnasp_slim
+    container_name: rs_rnasp_container
+    volumes:
+      - ./data:/app/data
+  rmsd:
+    image: rmsd_slim
+    container_name: rmsd_container
+    volumes:
+      - ./data:/app/data
+  inf:
+    image: inf_slim
+    container_name: inf_container
+    volumes:
+      - ./data:/app/data
+  di:
+    image: di_slim
+    container_name: di_container
+    volumes:
+      - ./data:/app/data
+  p_value:
+    image: p_value_slim
+    container_name: p_value_container
+    volumes:
+      - ./data:/app/data
+  tm_score:
+    image: tm_score_slim
+    container_name: tm_score_container
+    volumes:
+      - ./data:/app/data
+  cad_score:
+    image: cad_score_slim
+    container_name: cad_score_container
+    volumes:
+      - ./data:/app/data
+  gdt_ts:
+    image: gdt_ts_slim
+    container_name: gdt_ts_container
+    volumes:
+      - ./data:/app/data
+  ares:
+    image: ares_slim
+    container_name: ares_container
+    volumes:
+      - ./data:/app/data
+  rna3dcnn:
+    image: rna3dcnn_slim
+    container_name: rna3dcnn_container
+    volumes:
+      - ./data:/app/data
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all

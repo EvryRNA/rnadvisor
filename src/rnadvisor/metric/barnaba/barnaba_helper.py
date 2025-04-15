@@ -11,7 +11,6 @@ Nucleic acids research 42.21 (2014): 13306-13314.
 """
 
 from typing import Dict, Tuple, Optional
-from loguru import logger
 
 import lib.barnaba.barnaba as bb
 import numpy as np

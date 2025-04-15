@@ -65,3 +65,91 @@ services:
     image: lcs_image
     container_name: lcs_container
     entrypoint: python -m rnadvisor.metric.mcq4structures.lcs_helper
+  lddt:
+    build:
+      context: .
+      dockerfile: dockerfiles/ost.dockerfile
+    image: lddt_image
+    container_name: lddt_container
+  rasp:
+    build:
+      context: .
+      dockerfile: dockerfiles/rasp.dockerfile
+    image: rasp_image
+    container_name: rasp_container
+  rs_rnasp:
+    build:
+      context: .
+      dockerfile: dockerfiles/rs_rnasp.dockerfile
+    image: rs_rnasp_image
+    container_name: rs_rnasp_container
+  rmsd:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna_tools.dockerfile
+      target: rmsd
+    image: rmsd_image
+    container_name: rmsd_image
+  inf:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna_tools.dockerfile
+      target: inf
+    image: inf_image
+    container_name: inf_image
+  di:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna_tools.dockerfile
+      target: di
+    image: di_image
+    container_name: di_image
+  p_value:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna_tools.dockerfile
+      target: p_value
+    image: p_value_image
+    container_name: p_value_image
+  tm_score:
+    build:
+      context: .
+      dockerfile: dockerfiles/zhanggroup.dockerfile
+      target: tm_score
+    image: tm_score_image
+    container_name: tm_score_image
+  gdt_ts:
+    build:
+      context: .
+      dockerfile: dockerfiles/zhanggroup.dockerfile
+      target: gdt_ts
+    image: gdt_ts_image
+    container_name: gdt_ts_image
+  cad_score:
+    build:
+      context: .
+      dockerfile: dockerfiles/voronota.dockerfile
+    image: cad_score_image
+    container_name: cad_score_image
+  ares:
+    build:
+      context: .
+      dockerfile: dockerfiles/ares.dockerfile
+    image: ares_image
+    container_name: ares_image
+    platform: linux/amd64
+  rna3dcnn:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna3dcnn.dockerfile
+    image: rna3dcnn_image
+    container_name: rna3dcnn_image
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+  rna_briq:
+    build:
+      context: .
+      dockerfile: dockerfiles/rna_briq.dockerfile
+    image: rna_briq_image
+    container_name: rna_briq_image
