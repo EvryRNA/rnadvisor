@@ -62,5 +62,6 @@ RUN find /usr/local/lib/python3.7/site-packages/ -name '*nspkg.pth' -exec rm -v 
 
 COPY src/rnadvisor /app/rnadvisor
 COPY data/example /app/data/example
+
 ENTRYPOINT ["python", "-m", "rnadvisor.scoring_function.ares.ares_helper"]
 CMD ["--pred_dir=data/example/PREDS"]

@@ -95,8 +95,8 @@ class AresHelper(PredictAbstract):
     def predict_model(self, pred_path: str):
         """Load the ARES model and create the dataset, trainer."""
         rna_name = os.path.basename(pred_path)
-        # Path has been saved in the reduce_data function
         tmp_dir = os.path.join("tmp", "ares", "dataset")
+        shutil.rmtree(tmp_dir, ignore_errors=True)
         os.makedirs(tmp_dir, exist_ok=True)
         in_path = os.path.join(self.tmp_dir, rna_name)
         shutil.copy(in_path, tmp_dir)
@@ -108,7 +108,6 @@ class AresHelper(PredictAbstract):
         except (RuntimeError, KeyError):
             # Even with reduce, the prediction was not successful
             return np.nan
-        shutil.rmtree(tmp_dir)
         return out[0]["test_loss"]
 
     @time_it

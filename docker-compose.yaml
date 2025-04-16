@@ -5,6 +5,7 @@ services:
       dockerfile: dockerfiles/tb_mcq.dockerfile
     image: tb_mcq_image
     container_name: tb_mcq_container
+    platform: linux/amd64
   clash:
     build:
       context: .
@@ -23,6 +24,7 @@ services:
       context: .
       dockerfile: dockerfiles/lociparse.dockerfile
     image: lociparse_image
+#    platform: linux/amd64
     container_name: lociparse_container
   3drnascore:
     build:
@@ -61,10 +63,9 @@ services:
     build:
       context: .
       dockerfile: dockerfiles/mcq.dockerfile
-      target: mcq
+      target: lcs
     image: lcs_image
     container_name: lcs_container
-    entrypoint: python -m rnadvisor.metric.mcq4structures.lcs_helper
   lddt:
     build:
       context: .

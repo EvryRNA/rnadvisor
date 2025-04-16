@@ -12,7 +12,7 @@ COPY --from=mcq_dependencies /app/ /app/
 RUN mvn -B -e clean install --file lib/mcq4structures/pom.xml
 
 
-FROM python:3.10-slim AS mcq
+FROM python:3.10-slim AS mcq4structures
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y \
@@ -29,5 +29,11 @@ RUN pip install --no-cache-dir -r wrapper.txt
 
 COPY src/rnadvisor /app/rnadvisor
 COPY data/example /app/data/example
+
+FROM mcq4structures AS mcq
 ENTRYPOINT ["python", "-m", "rnadvisor.metric.mcq4structures.mcq_helper"]
-CMD ["--pred_dir=data/example/PREDS", "--native_dir=data.example/NATIVE/R1107.pdb"]
+CMD ["--pred_dir=data/example/PREDS", "--native_path=data/example/NATIVE/R1107.pdb"]
+
+FROM mcq4structures AS lcs
+ENTRYPOINT ["python", "-m", "rnadvisor.metric.mcq4structures.lcs_helper"]
+CMD ["--pred_dir=data/example/PREDS", "--native_path=data/example/NATIVE/R1107.pdb"]

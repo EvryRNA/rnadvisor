@@ -28,11 +28,12 @@ sys.path.append('pamnet')
 from models import PAMNet, Config
 from inference_rna_puzzles import predict
 from preprocess_rna_puzzles import construct_graphs
+import tempfile
 
 class PAMNetHelper(PredictAbstract):
-    def __init__(self, tmp_dir: str = os.path.join("tmp","pamnet"),  *args, **kwargs):
+    def __init__(self,  *args, **kwargs):
         super().__init__(name="PAMNet", *args, **kwargs)
-        self.tmp_dir = tmp_dir
+        self.tmp_dir = tempfile.mkdtemp(prefix="pamnet")
         self.model = self.get_model()
 
     @staticmethod

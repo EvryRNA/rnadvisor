@@ -51,7 +51,7 @@ class TBMCQHelper(PredictAbstract):
         :param pred_paths: list of paths to RNA `.pdb` files.
         """
         device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.tb_mcq = TBMCQCLI(None, None, device)
+        self.tb_mcq = TBMCQCLI(None, None, device, model_path="models/sayby_rna_torsionbert")
 
 main = build_predict_cli(TBMCQHelper)
 

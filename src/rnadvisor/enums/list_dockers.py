@@ -1,22 +1,22 @@
-import os
-OUT_DIR = os.path.join("data", "tmp")
-OUT_DIR_SCORES = os.path.join("data", "tmp", "scores")
-OUT_DIR_TIMES = os.path.join("data", "tmp", "times")
-
 SERVICES = ["clash", "pamnet", "lociparse", "3drnascore",
-            "tb_mcq", "barnaba", "cgrnasp",
-            "dfire", "mcq", "lcs", "cad_score", "tm_score",
-            "lddt", "rasp", "rs_rnasp", "rmsd", "inf",
-            "p_value", "di", "gdt_ts", "cad_score"]
+            "tb-mcq", "barnaba", "cgrnasp",
+            "dfire", "mcq", "lcs", "cad-score", "tm-score",
+            "lddt", "rasp", "rs-rnasp", "rmsd", "inf",
+            "p-value", "di", "gdt-ts", "cad-score", "ares", "rna3dcnn", "rna-briq"]
 ALL = SERVICES
-ALL_METRICS = ["barnaba", "mcq", "lcs", "cad_score", "tm_score",
-           "lddt", "rmsd", "inf", "p_value", "di",
-           "gdt_ts", "cad_score", "clash"]
+ALL_METRICS = ["barnaba", "mcq", "lcs", "cad-score", "tm-score",
+           "lddt", "rmsd", "inf", "p-value", "di",
+           "gdt-ts", "cad_score", "clash"]
 ALL_SF = ["pamnet", "lociparse", "3drnascore",
-          "tb_mcq", "barnaba", "cgrnasp", "dfire", "rasp",
-          "rs_rnasp"]
+          "tb-mcq", "barnaba", "cgrnasp", "dfire", "rasp",
+          "rs-rnasp", "ares", "rna3dcnn", "rna-briq"]
 
 SERVICES_DICT = {key: {"args": {
-    "--out_path": os.path.join(OUT_DIR_SCORES, f"{key}.csv"),
-    "--out_time_path": os.path.join(OUT_DIR_TIMES, f"{key}.csv"),
-}} for key in SERVICES}
+    }} for key in SERVICES}
+
+
+DESCENDING_METRICS = ["BARNABA-eRMSD", "BARNABA-RMSD","RMSD", "P-VALUE", "CLASH", "MCQ",
+                      "RMSD", "DI"
+                      ]
+DESCENDING_SF = ["PAMNet", "3drnascore", "tb_mcq", "cgRNASP","cgRNASP-C","cgRNASP-PC","DFIRE",
+                 "RASP-ENERGY", "rsRNASP", "ARES"]

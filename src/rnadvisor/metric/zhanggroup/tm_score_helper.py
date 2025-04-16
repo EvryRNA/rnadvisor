@@ -1,6 +1,7 @@
 import os
 import subprocess
 from typing import Tuple, Dict, Optional
+import numpy as np
 
 
 from rnadvisor.predict_abstract import PredictAbstract
@@ -57,9 +58,12 @@ class TMScoreHelper(PredictAbstract):
         :return: the TM-score for the prediction.
         """
         command = f"{zhang_bin_path_us} -mol RNA {pred_path} {native_path} | grep -E 'TM-score'"
-        output = subprocess.check_output(command, shell=True)
-        scores = str(output.decode()).split("\n")
-        tm_score = float(scores[1].split()[1])
+        try:
+            output = subprocess.check_output(command, shell=True)
+            scores = str(output.decode()).split("\n")
+            tm_score = float(scores[1].split()[1])
+        except subprocess.CalledProcessError as e:
+            tm_score = np.nan
         return tm_score
 
 main = build_predict_cli(TMScoreHelper)
