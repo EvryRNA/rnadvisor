@@ -11,6 +11,8 @@
 [![slim](https://img.shields.io/badge/docker-slim-blue)](https://github.com/slimtoolkit/slim)
 [![Python](https://img.shields.io/pypi/pyversions/tensorflow.svg)](https://badge.fury.io/py/tensorflow)
 [![DOI](https://img.shields.io/badge/DOI-10.1093/bib/bbae064-green)](https://doi.org/10.1093/bib/bbae064)
+[![PyPI version](https://badge.fury.io/py/rnadvisor.svg)](https://pypi.org/project/rnadvisor/)
+
 
 </div>
 
