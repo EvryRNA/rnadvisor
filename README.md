@@ -3,7 +3,7 @@
 <div align="center">
 
 <!-- omit in toc -->
-# RNAdvisor v2 🚀
+# RNAdvisor v2 🧬
 <strong>Fast and easy way to compute RNA 3D structural quality</strong>
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
