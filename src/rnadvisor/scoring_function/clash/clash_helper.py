@@ -5,25 +5,30 @@ The original github code is the following:
 """
 
 import os
+import xml.etree.ElementTree as ET  # nosec
 from typing import Dict, Optional, Tuple
 
 import numpy as np
 
-import xml.etree.ElementTree as ET
-
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
-
 from rnadvisor.utils.utils import time_it
 
-COMMAND = "$BIN_PATH --command CLASH-SCORE " \
-          "--single-model-file-path $INPUT_PATH --output-file-path $OUTPUT_PATH 2>&1 > /dev/null"
+COMMAND = (
+    "$BIN_PATH --command CLASH-SCORE "
+    "--single-model-file-path $INPUT_PATH --output-file-path $OUTPUT_PATH 2>&1 > /dev/null"
+)
 
 
 class ClashHelper(PredictAbstract):
-    def __init__(self, rnaqua_bin_path: Optional[str] = None, tmp_dir: str = os.path.join("tmp", "clash"),
-                 *args, **kwargs):
-        super(ClashHelper, self).__init__(name="CLASH", *args, **kwargs)
+    def __init__(
+        self,
+        rnaqua_bin_path: Optional[str] = None,
+        tmp_dir: str = os.path.join("tmp", "clash"),
+        *args,
+        **kwargs,
+    ):
+        super(ClashHelper, self).__init__(name="CLASH", *args, **kwargs)  # type: ignore
         self.rnaqua_bin_path = rnaqua_bin_path
         self.tmp_dir = tmp_dir
         os.makedirs(tmp_dir, exist_ok=True)
@@ -44,14 +49,18 @@ class ClashHelper(PredictAbstract):
             if rnaqua_bin_path is not None
             else os.path.join("lib", "rnaqua", "rnaqua-binary", "bin", "rnaqua.sh")
         )
-        command = COMMAND.replace("$INPUT_PATH", pred_path).replace("$OUTPUT_PATH", tmp_path).replace("$BIN_PATH", rnaqua_bin_path)
-        os.system(command)
+        command = (
+            COMMAND.replace("$INPUT_PATH", pred_path)
+            .replace("$OUTPUT_PATH", tmp_path)
+            .replace("$BIN_PATH", rnaqua_bin_path)
+        )
+        os.system(command)  # nosec
         try:
             clash_score = ClashHelper.get_clash_score(tmp_path)
         except (ET.ParseError, FileNotFoundError):
             clash_score = np.nan
         if os.path.exists(tmp_path):
-            os.system(f"rm {tmp_path}")
+            os.system(f"rm {tmp_path}")  # nosec
         return clash_score
 
     @staticmethod
@@ -59,10 +68,10 @@ class ClashHelper(PredictAbstract):
         """
         Extracts the clash score from the given XML file.
         """
-        tree = ET.parse(xml_file_path)
-        root = tree.getroot()
-        score = root.find('.//score').text
-        return float(score)
+        tree = ET.parse(xml_file_path)  # nosec
+        root = tree.getroot()  # nosec
+        score = root.find(".//score").text  # type: ignore
+        return float(score)  # type: ignore
 
     @time_it
     def predict_single_file(
@@ -76,6 +85,7 @@ class ClashHelper(PredictAbstract):
         tmp_out = os.path.join(self.tmp_dir, "tmp.xml")
         clash_score = self.compute_clash(pred_path, tmp_out, self.rnaqua_bin_path)
         return {self.name: clash_score}  # type: ignore
+
 
 main = build_predict_cli(ClashHelper)
 

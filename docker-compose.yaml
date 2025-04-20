@@ -5,7 +5,6 @@ services:
       dockerfile: dockerfiles/tb_mcq.dockerfile
     image: tb_mcq_image
     container_name: tb_mcq_container
-    platform: linux/amd64
   clash:
     build:
       context: .
@@ -17,14 +16,12 @@ services:
       context: .
       dockerfile: dockerfiles/pamnet.dockerfile
     image: pamnet_image
-    platform: linux/amd64
     container_name: pamnet_container
   lociparse:
     build:
       context: .
       dockerfile: dockerfiles/lociparse.dockerfile
     image: lociparse_image
-#    platform: linux/amd64
     container_name: lociparse_container
   3drnascore:
     build:
@@ -32,14 +29,12 @@ services:
       dockerfile: dockerfiles/rnascore.dockerfile
     image: 3drnascore_image
     container_name: 3drnascore_container
-    platform: linux/amd64
   barnaba:
     build:
       context: .
       dockerfile: dockerfiles/barnaba.dockerfile
     image: barnaba_image
     container_name: barnaba_container
-    platform: linux/amd64
   cgrnasp:
     build:
       context: .
@@ -138,7 +133,6 @@ services:
       dockerfile: dockerfiles/ares.dockerfile
     image: ares_image
     container_name: ares_image
-    platform: linux/amd64
   rna3dcnn:
     build:
       context: .

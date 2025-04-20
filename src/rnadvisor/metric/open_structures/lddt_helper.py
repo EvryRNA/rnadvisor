@@ -12,13 +12,12 @@ Source for the lDDT score:
     https://doi.org/10.1093/bioinformatics/btt473
 """
 
-from typing import Tuple, Dict, Optional
+from typing import Dict, Optional, Tuple
 
 from rnadvisor.cli_runner import build_predict_cli
+from rnadvisor.metric.open_structures.abstract_ost import AbstractOST
 from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.utils.utils import fn_time
-
-from rnadvisor.metric.open_structures.abstract_ost import AbstractOST
 
 
 class LDDTHelper(PredictAbstract):
@@ -29,7 +28,7 @@ class LDDTHelper(PredictAbstract):
         super(LDDTHelper, self).__init__(name="lddt", *args, **kwargs)
 
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the lDDT for a single prediction.
@@ -50,7 +49,8 @@ class LDDTHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: the lDDT score for the prediction.
         """
-        return AbstractOST.get_metric(pred_path, native_path, ["lddt", "bb-lddt"])
+        return AbstractOST.get_metric(pred_path, native_path, ["lddt", "bb-lddt"])  # type: ignore
+
 
 main = build_predict_cli(LDDTHelper)
 

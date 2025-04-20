@@ -1,5 +1,7 @@
-from transformers import AutoTokenizer, AutoModel
 import os
+
+from transformers import AutoModel, AutoTokenizer
+
 
 def download_model(model_path, model_name):
     """Download a Hugging Face model and tokenizer to the specified directory"""
@@ -12,4 +14,5 @@ def download_model(model_path, model_name):
     model.save_pretrained(model_path)
     tokenizer.save_pretrained(model_path)
 
-download_model('models/sayby_rna_torsionbert', 'sayby/rna_torsionbert')
+
+download_model("models/sayby_rna_torsionbert", "sayby/rna_torsionbert")

@@ -12,17 +12,15 @@ Source for the GDT-TS score (adapted from the CASP competition):
 """
 
 import os
-import subprocess
+import subprocess  # nosec
 import time
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, no_type_check
 
 import numpy as np
 from loguru import logger
 
-from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.cli_runner import build_predict_cli
-
-
+from rnadvisor.predict_abstract import PredictAbstract
 
 
 class GdtTsHelper(PredictAbstract):
@@ -40,8 +38,9 @@ class GdtTsHelper(PredictAbstract):
             if zhang_bin_path is not None
             else os.path.join("lib", "zhanggroup", "TMscore")
         )
-        super(GdtTsHelper, self).__init__(name="GDT-TS",*args, **kwargs)
+        super(GdtTsHelper, self).__init__(name="GDT-TS", *args, **kwargs)  # type: ignore
 
+    @no_type_check
     def predict_single_file(
         self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
@@ -55,7 +54,9 @@ class GdtTsHelper(PredictAbstract):
         # Get the different scores
         time_b = time.time()
         gdt_ts, gdt_ts_detailed = self._compute_zhanggroup_scores(
-            pred_path, native_path, self.bin_path
+            pred_path,
+            native_path,
+            self.bin_path,
         )
         execution_time = time.time() - time_b
         all_scores["GDT-TS"] = gdt_ts
@@ -76,7 +77,9 @@ class GdtTsHelper(PredictAbstract):
         :param zhang_bin_path: path to the binary executable TMScore file
         :return: the GDT-TS score given by the Zhanggroup
         """
-        gdt_ts, _ = GdtTsHelper._compute_zhanggroup_scores(pred_path, native_path, zhang_bin_path)
+        gdt_ts, _ = GdtTsHelper._compute_zhanggroup_scores(
+            pred_path, native_path, zhang_bin_path
+        )
         return gdt_ts
 
     @staticmethod
@@ -116,7 +119,7 @@ class GdtTsHelper(PredictAbstract):
         command = f"{zhang_bin_path} {pred_path} {native_path} | grep -E 'GDT-TS'"
         distances = [1, 2, 4, 8]
         try:
-            output = subprocess.check_output(command, shell=True)
+            output = subprocess.check_output(command, shell=True)  # nosec
             scores = str(output.decode()).split("\n")
             # Convert the output of the shell command to scores
             gdt_ts = float(scores[0].split()[1])
@@ -129,6 +132,7 @@ class GdtTsHelper(PredictAbstract):
         except subprocess.CalledProcessError:
             logger.debug(f"PATH TO TMscore binary not found : {zhang_bin_path}")
             return np.nan, {f"GDT-TS@{distance}": np.nan for distance in distances}
+
 
 main = build_predict_cli(GdtTsHelper)
 

@@ -11,10 +11,9 @@ from typing import Dict, Optional, Tuple
 from lib.rna_assessment.RNA_normalizer.structures.pdb_comparer import PDBComparer
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
 
+from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.metric.rna_assessment.abstract_assessment import AbstractAssessment
 from rnadvisor.utils.utils import time_it
-
-from rnadvisor.cli_runner import build_predict_cli
 
 
 class RMSDHelper(AbstractAssessment):
@@ -36,7 +35,9 @@ class RMSDHelper(AbstractAssessment):
         return {self.name: rmsd}  # type: ignore
 
     @staticmethod
-    def compute_rmsd_from_structures(native_struc: PDBStruct, pred_struc: PDBStruct) -> float:
+    def compute_rmsd_from_structures(
+        native_struc: PDBStruct, pred_struc: PDBStruct
+    ) -> float:
         """
         Static method to compute the RMSD score from the native and predicted structures.
         :param native_struc: native structure in a PDBStruc instance
@@ -68,6 +69,7 @@ class RMSDHelper(AbstractAssessment):
         )
         rmsd = RMSDHelper.compute_rmsd_from_structures(native_struc, pred_struc)
         return rmsd
+
 
 main = build_predict_cli(RMSDHelper)
 

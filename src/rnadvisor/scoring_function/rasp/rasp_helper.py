@@ -9,18 +9,17 @@ Bioinformatics 27(8):1086-93
 """
 
 import os
-import subprocess
+import subprocess  # nosec
 import time
-from typing import Dict, Optional, Tuple, List
+from typing import Dict, List, Optional, Tuple
 
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
 
 
-
 class RASPHelper(PredictAbstract):
     def __init__(self, rasp_bin_path: Optional[str] = None, *args, **kwargs):
-        super(RASPHelper, self).__init__(name="rasp", *args, **kwargs)
+        super(RASPHelper, self).__init__(name="rasp", *args, **kwargs)  # type: ignore
         self.rasp_bin_path = rasp_bin_path
 
     @staticmethod
@@ -38,16 +37,17 @@ class RASPHelper(PredictAbstract):
             else os.path.join("lib", "rasp", "bin", "rasp_fd")
         )
         command = (
-                f"{rasp_bin_path} -e all -p {pred_path}" + """ | awk '{print $1 " " $2 " " $3}'"""
+            f"{rasp_bin_path} -e all -p {pred_path}"
+            + """ | awk '{print $1 " " $2 " " $3}'"""
         )
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         rasp = output.decode().replace("\n", "").split()
         rasp = [float(score) for score in rasp]  # type: ignore
         return rasp
 
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
-        ) -> Tuple[Dict, Dict]:
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
+    ) -> Tuple[Dict, Dict]:
         time_b = time.time()
         energy_score, nb_contacts, normalized_energy = self.compute_rasp(
             pred_path, self.rasp_bin_path

@@ -15,20 +15,24 @@ Science373,1047-1051(2021).
 DOI:10.1126/science.abe5650
 """
 
-from typing import List
-import shutil
-from typing import Dict, Optional, Tuple
+import logging
 import os
-import numpy as np
-import torch_geometric
+import shutil
+import warnings
+from typing import Dict, List, Optional, Tuple
+
 import atom3d.datasets as da
 import lib.ares.ares_release.ares.data as d
 import lib.ares.ares_release.ares.model as m
+import numpy as np
 import pytorch_lightning as pl
-import logging
-from tqdm import tqdm
-import warnings
+import torch_geometric
 from loguru import logger
+from tqdm import tqdm
+
+from rnadvisor.cli_runner import build_predict_cli
+from rnadvisor.predict_abstract import PredictAbstract
+from rnadvisor.utils.utils import time_it
 
 logging.getLogger("torch").setLevel(logging.ERROR)
 logging.getLogger("lightning").setLevel(logging.ERROR)
@@ -36,11 +40,9 @@ warnings.filterwarnings(
     "ignore", category=UserWarning, module="pytorch_lightning.utilities.distributed"
 )
 
-from rnadvisor.utils.utils import time_it
-from rnadvisor.cli_runner import build_predict_cli
-from rnadvisor.predict_abstract import PredictAbstract
 
 REDUCE_COMMAND = "reduce -NOFLIP $INPUT_PATH > $OUTPUT_PATH 2>/dev/null"
+
 
 class AresHelper(PredictAbstract):
     """
@@ -48,7 +50,7 @@ class AresHelper(PredictAbstract):
     """
 
     def __init__(self, ares_weights: Optional[str] = None, *args, **kwargs):
-        super(AresHelper, self).__init__(name="ares",*args, **kwargs)
+        super(AresHelper, self).__init__(name="ares", *args, **kwargs)  # type: ignore
         self.ares_weights = (
             ares_weights
             if ares_weights is not None
@@ -74,14 +76,17 @@ class AresHelper(PredictAbstract):
         logger.debug("Reducing data for ARES scoring function.")
         for pred_path in tqdm(pred_paths):
             out_path = os.path.join(self.tmp_dir, os.path.basename(pred_path))
-            command = REDUCE_COMMAND.replace("$INPUT_PATH", pred_path).replace("$OUTPUT_PATH", out_path)
+            command = REDUCE_COMMAND.replace("$INPUT_PATH", pred_path).replace(
+                "$OUTPUT_PATH", out_path
+            )
             if not os.path.exists(out_path):
-                os.system(command)
+                os.system(command)  # nosec
         logger.debug("Data reduced for ARES scoring function.")
         logger.debug("Starting ARES prediction.")
 
-
-    def prepare_data(self, native_path: Optional[str], pred_paths: List[str], *args, **kwargs):
+    def prepare_data(
+        self, native_path: Optional[str], pred_paths: List[str], *args, **kwargs
+    ):
         """
         Prepare the data for the metric/scoring function.
         It can be the load of the model or the preprocessing of the data.
@@ -102,7 +107,9 @@ class AresHelper(PredictAbstract):
         shutil.copy(in_path, tmp_dir)
         transform = d.create_transform(False, None, "pdb")
         dataset = da.load_dataset(tmp_dir, "pdb", transform)
-        dataloader = torch_geometric.data.DataLoader(dataset, batch_size=1, num_workers=1)
+        dataloader = torch_geometric.data.DataLoader(
+            dataset, batch_size=1, num_workers=1
+        )
         try:
             out = self.trainer.test(self.tfnn, dataloader, verbose=False)
         except (RuntimeError, KeyError):
@@ -112,10 +119,11 @@ class AresHelper(PredictAbstract):
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         ares = self.compute_ares(pred_path, self.ares_weights)
         return {"ARES": ares}  # type: ignore
+
 
 main = build_predict_cli(AresHelper)
 

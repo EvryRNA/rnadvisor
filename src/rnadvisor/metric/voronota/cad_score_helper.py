@@ -10,23 +10,19 @@ The associated paper is the following:
     Pages W259–W263, https://doi.org/10.1093/nar/gku294
 """
 
-import subprocess
-from typing import Dict, Tuple, Optional
+import subprocess  # nosec
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 
-
-from rnadvisor.predict_abstract import PredictAbstract
-
-
 from rnadvisor.cli_runner import build_predict_cli
-
+from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.utils.utils import time_it
 
 
 class CADScoreHelper(PredictAbstract):
     def __init__(self, *args, **kwargs):
-        super(CADScoreHelper, self).__init__(name="CAD",*args, **kwargs)
+        super(CADScoreHelper, self).__init__(name="CAD", *args, **kwargs)
 
     @staticmethod
     def compute_cad_score(
@@ -44,7 +40,7 @@ class CADScoreHelper(PredictAbstract):
             f"voronota-cadscore --input-target {native_path} --input-model {pred_path}"
             + "| awk '{print $5}'"
         )
-        output = subprocess.check_output(command, shell=True)
+        output = subprocess.check_output(command, shell=True)  # nosec
         try:
             cad_score = float(str(output.decode()).replace("\n", ""))
         except ValueError:
@@ -55,7 +51,7 @@ class CADScoreHelper(PredictAbstract):
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the CAD score for a given prediction and the native .pdb path.
@@ -63,8 +59,9 @@ class CADScoreHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: dictionary with the CAD score for the given inputs
         """
-        mcq_score = self.compute_cad_score(pred_path, native_path)
+        mcq_score = self.compute_cad_score(pred_path, native_path)  # type: ignore
         return {"CAD": mcq_score}  # type: ignore
+
 
 main = build_predict_cli(CADScoreHelper)
 

@@ -9,22 +9,20 @@ J Chem Inf Model.
 2024 Nov 25;64(22):8655-8664. doi: 10.1021/acs.jcim.4c01621.
 Epub 2024 Nov 11. PMID: 39523843; PMCID: PMC11600500.
 """
-from typing import Optional, Tuple, Dict
+
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 from lociPARSE import lociparse
 
-from rnadvisor.predict_abstract import PredictAbstract
-
 from rnadvisor.cli_runner import build_predict_cli
-
+from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.utils.utils import time_it
 
 
 class LOCIPARSEHelper(PredictAbstract):
     def __init__(self, *args, **kwargs):
         super().__init__(name="LociPARSE", *args, **kwargs)
-
 
     def compute_lociparse(self, pred_path: str) -> float:
         """
@@ -41,7 +39,7 @@ class LOCIPARSEHelper(PredictAbstract):
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the LociPARSE score for a given structure.
@@ -50,6 +48,7 @@ class LOCIPARSEHelper(PredictAbstract):
         """
         lociparse_score = self.compute_lociparse(pred_path)
         return {self.name: lociparse_score}  # type: ignore
+
 
 main = build_predict_cli(LOCIPARSEHelper)
 

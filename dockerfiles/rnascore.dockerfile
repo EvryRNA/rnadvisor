@@ -20,3 +20,4 @@ RUN pip install --no-cache-dir -r wrapper.txt
 COPY src/rnadvisor /app/rnadvisor
 COPY data/example /app/data/example
 ENTRYPOINT ["python", "-m", "rnadvisor.scoring_function.rnascore.rnascore_helper"]
+CMD ["--pred_dir=data/example/PREDS"]

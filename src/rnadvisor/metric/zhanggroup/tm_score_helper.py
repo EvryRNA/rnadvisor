@@ -1,12 +1,11 @@
 import os
-import subprocess
-from typing import Tuple, Dict, Optional
+import subprocess  # nosec
+from typing import Dict, Optional, Tuple
+
 import numpy as np
 
-
-from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.cli_runner import build_predict_cli
-
+from rnadvisor.predict_abstract import PredictAbstract
 from rnadvisor.utils.utils import time_it
 
 
@@ -30,11 +29,11 @@ class TMScoreHelper(PredictAbstract):
             if zhang_bin_path_us is not None
             else os.path.join("lib", "zhanggroup", "USalign")
         )
-        super(TMScoreHelper, self).__init__(name="TM-score", *args, **kwargs)
+        super(TMScoreHelper, self).__init__(name="TM-score", *args, **kwargs)  # type: ignore
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the TM-score for a single prediction.
@@ -42,7 +41,7 @@ class TMScoreHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: the TM-score
         """
-        tm_score = self.compute_tm_score(pred_path, native_path, self.bin_path)
+        tm_score = self.compute_tm_score(pred_path, native_path, self.bin_path)  # type: ignore
         return {"TM-score": tm_score}  # type: ignore
 
     @staticmethod
@@ -59,12 +58,13 @@ class TMScoreHelper(PredictAbstract):
         """
         command = f"{zhang_bin_path_us} -mol RNA {pred_path} {native_path} | grep -E 'TM-score'"
         try:
-            output = subprocess.check_output(command, shell=True)
+            output = subprocess.check_output(command, shell=True)  # nosec
             scores = str(output.decode()).split("\n")
             tm_score = float(scores[1].split()[1])
-        except subprocess.CalledProcessError as e:
+        except subprocess.CalledProcessError:
             tm_score = np.nan
         return tm_score
+
 
 main = build_predict_cli(TMScoreHelper)
 

@@ -14,15 +14,12 @@ for RNA structure evaluation.
 NAR Genom Bioinform. 5(1): lqad016.
 """
 
-from typing import Optional, Tuple, Dict
 import os
-import subprocess
-
+import subprocess  # nosec
+from typing import Dict, Optional, Tuple
 
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
-
-
 from rnadvisor.utils.utils import fn_time
 
 
@@ -32,7 +29,7 @@ class CGRNASPHelper(PredictAbstract):
     """
 
     def __init__(self, cgrnasp_bin_path: Optional[str] = None, *args, **kwargs):
-        super(CGRNASPHelper, self).__init__(name="cgrnasp",*args, **kwargs)
+        super(CGRNASPHelper, self).__init__(name="cgrnasp", *args, **kwargs)  # type: ignore
         self.cgrnasp_bin_path = (
             cgrnasp_bin_path
             if cgrnasp_bin_path is not None
@@ -40,7 +37,9 @@ class CGRNASPHelper(PredictAbstract):
         )
 
     @staticmethod
-    def compute_cgrnasp(pred_path: str, cgrnasp_bin_path: Optional[str] = None) -> float:
+    def compute_cgrnasp(
+        pred_path: str, cgrnasp_bin_path: Optional[str] = None
+    ) -> float:
         """
         Compute the cgRNASP score.
         :param pred_path: the path to the .pdb file of a prediction.
@@ -54,12 +53,14 @@ class CGRNASPHelper(PredictAbstract):
         )
         bin_path = os.path.join(cgrnasp_bin_path, "cgRNASP_bin")
         command = f"{bin_path} {pred_path}"
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         cgrnasp = output.decode().replace("\n", "").split()[-1]
         return round(float(cgrnasp), 3)
 
     @staticmethod
-    def compute_cgrnasp_c(pred_path: str, cgrnasp_bin_path: Optional[str] = None) -> float:
+    def compute_cgrnasp_c(
+        pred_path: str, cgrnasp_bin_path: Optional[str] = None
+    ) -> float:
         """
         Compute the cgRNASP-C score.
         :param pred_path: the path to the .pdb file of a prediction.
@@ -73,12 +74,14 @@ class CGRNASPHelper(PredictAbstract):
         )
         bin_path = os.path.join(cgrnasp_bin_path, "cgRNASP-C_bin")
         command = f"{bin_path} {pred_path}"
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         cgrnasp_c = output.decode().replace("\n", "").split()[-1]
         return round(float(cgrnasp_c), 3)
 
     @staticmethod
-    def compute_cgrnasp_pc(pred_path: str, cgrnasp_bin_path: Optional[str] = None) -> float:
+    def compute_cgrnasp_pc(
+        pred_path: str, cgrnasp_bin_path: Optional[str] = None
+    ) -> float:
         """
         Compute the cgRNASP-PC score.
         :param pred_path: the path to the .pdb file of a prediction.
@@ -92,17 +95,19 @@ class CGRNASPHelper(PredictAbstract):
         )
         bin_path = os.path.join(cgrnasp_bin_path, "cgRNASP-PC_bin")
         command = f"{bin_path} {pred_path}"
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         cgrnasp_pc = output.decode().replace("\n", "").split()[-1]
         return round(float(cgrnasp_pc), 3)
 
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
-        ) -> Tuple[Dict, Dict]:
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
+    ) -> Tuple[Dict, Dict]:
         """
         Compute the cgRNASP, cgRNASP-C and cgRNASP-PC scores.
         """
-        cgrnasp, cgrnasp_time = fn_time(self.compute_cgrnasp, pred_path, self.cgrnasp_bin_path)
+        cgrnasp, cgrnasp_time = fn_time(
+            self.compute_cgrnasp, pred_path, self.cgrnasp_bin_path
+        )
         cgrnasp_c, cgrnasp_c_time = fn_time(
             self.compute_cgrnasp_c, pred_path, self.cgrnasp_bin_path
         )
@@ -116,6 +121,7 @@ class CGRNASPHelper(PredictAbstract):
             "cgRNASP-PC": cgrnasp_pc_time,
         }
         return scores, times
+
 
 main = build_predict_cli(CGRNASPHelper)
 

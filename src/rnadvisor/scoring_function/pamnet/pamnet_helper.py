@@ -8,45 +8,52 @@ A universal framework for accurate and efficient geometric deep learning of mole
 Sci Rep 13, 19171 (2023).
 https://doi.org/10.1038/s41598-023-46382-8
 """
+
 import os
 import shutil
-from typing import Optional, List
-
-import torch
+import sys
 import time
-import pandas as pd
+from typing import List, Optional
 
-from rnadvisor.predict_abstract import PredictAbstract
+import pandas as pd
+import torch
+from loguru import logger
 
 from rnadvisor.cli_runner import build_predict_cli
+from rnadvisor.predict_abstract import PredictAbstract
 
-from loguru import logger
-import sys
-
-
-sys.path.append('pamnet')
-from models import PAMNet, Config
-from inference_rna_puzzles import predict
-from preprocess_rna_puzzles import construct_graphs
+sys.path.append("pamnet")
 import tempfile
 
+from inference_rna_puzzles import predict
+from models import Config, PAMNet
+from preprocess_rna_puzzles import construct_graphs
+
+
 class PAMNetHelper(PredictAbstract):
-    def __init__(self,  *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(name="PAMNet", *args, **kwargs)
         self.tmp_dir = tempfile.mkdtemp(prefix="pamnet")
         self.model = self.get_model()
 
     @staticmethod
     def get_model():
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         if torch.cuda.is_available():
             torch.cuda.set_device(0)
-        config = Config(dataset="rna_native", dim=16, n_layer=1,
-                        cutoff_l=2.6,
-                        cutoff_g=20.0, flow="target_to_source")
+        config = Config(
+            dataset="rna_native",
+            dim=16,
+            n_layer=1,
+            cutoff_l=2.6,
+            cutoff_g=20.0,
+            flow="target_to_source",
+        )
 
         model = PAMNet(config).to(device)
-        model.load_state_dict(torch.load("pamnet/save/" + "pamnet_rna.pt", map_location=device))
+        model.load_state_dict(
+            torch.load("pamnet/save/" + "pamnet_rna.pt", map_location=device)  # nosec
+        )
         model.eval()
         return model
 
@@ -57,7 +64,9 @@ class PAMNetHelper(PredictAbstract):
         os.makedirs(self.tmp_dir, exist_ok=True)
         construct_graphs(in_dir, self.tmp_dir, "rna_graphs")
 
-    def prepare_data(self, native_path: Optional[str], pred_paths: List[str], *args, **kwargs):
+    def prepare_data(
+        self, native_path: Optional[str], pred_paths: List[str], *args, **kwargs
+    ):
         """
         Prepare the data for the metric/scoring function.
         It can be the load of the model or the preprocessing of the data.
@@ -66,8 +75,15 @@ class PAMNetHelper(PredictAbstract):
         """
         pass
 
-    def predict_dir(self, native_path: Optional[str], pred_dir: Optional[str], out_path: Optional[str],
-                    out_time_path: Optional[str], *args, **kwargs):
+    def predict_dir(
+        self,
+        native_path: Optional[str],
+        pred_dir: Optional[str],
+        out_path: Optional[str],
+        out_time_path: Optional[str],
+        *args,
+        **kwargs,
+    ):
         """
         Compute the metric/scoring function for a given directory/path.
         :param native_path: path to a native structure. If None, it will only compute scoring functions.
@@ -75,20 +91,25 @@ class PAMNetHelper(PredictAbstract):
         :param out_path: path to a `.csv` file where to save the predictions.
         :param out_time_path: path to a `.csv` file where to save the time taken for each prediction.
         """
-        native_path, pred_paths, out_path, out_time_path = self._init_dir_preds(native_path, pred_dir, out_path, out_time_path)
+        native_path, pred_paths, out_path, out_time_path = self._init_dir_preds(
+            native_path, pred_dir, out_path, out_time_path
+        )
         self.prepare_data(native_path, pred_paths, *args, **kwargs)
-        self.preprocess(pred_dir)
+        self.preprocess(pred_dir)  # type: ignore
         in_path, dataset = self.tmp_dir, "rna_graphs"
         time_b = time.time()
         df = predict(in_path, dataset, 1, None, self.model)
         time_all = time.time() - time_b
         shutil.rmtree(self.tmp_dir, ignore_errors=True)
         scores = df.rename_axis("rna")
-        times = pd.DataFrame({"rna": list(scores.index), self.name: [time_all/len(df)]*len(df)})
+        times = pd.DataFrame(
+            {"rna": list(scores.index), self.name: [time_all / len(df)] * len(df)}
+        )
         logger.info(f"Saving predictions to {out_path}")
         scores.to_csv(out_path, index=True)
         logger.info(f"Saving time to {out_time_path}")
         times.to_csv(out_time_path, index=False)
+
 
 main = build_predict_cli(PAMNetHelper)
 

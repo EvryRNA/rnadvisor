@@ -9,20 +9,21 @@ import numpy as np
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
 from loguru import logger
 
+from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.metric.rna_assessment.abstract_assessment import AbstractAssessment
 from rnadvisor.metric.rna_assessment.inf_helper import INFHelper
 from rnadvisor.metric.rna_assessment.rmsd_helper import RMSDHelper
 from rnadvisor.utils.utils import time_it
 
-from rnadvisor.cli_runner import build_predict_cli
-
 
 class DIHelper(AbstractAssessment):
     def __init__(self, *args, **kwargs):
-        super(DIHelper, self).__init__(name="DI",*args, **kwargs)
+        super(DIHelper, self).__init__(name="DI", *args, **kwargs)
 
     @staticmethod
-    def compute_di_from_structures(native_struc: PDBStruct, pred_struc: PDBStruct) -> float:
+    def compute_di_from_structures(
+        native_struc: PDBStruct, pred_struc: PDBStruct
+    ) -> float:
         """
         Static method to compute the Deformation Index score
                 from the native and predicted structures.
@@ -77,6 +78,7 @@ class DIHelper(AbstractAssessment):
         """
         di = self.compute_di_from_structures(native_struc, pred_struc)
         return {"DI": di}  # type: ignore
+
 
 main = build_predict_cli(DIHelper)
 

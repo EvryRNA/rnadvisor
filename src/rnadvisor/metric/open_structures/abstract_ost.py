@@ -1,11 +1,9 @@
 import json
-import subprocess
-
 import os
+import subprocess  # nosec
 from typing import List
 
 import numpy as np
-
 
 from rnadvisor.predict_abstract import PredictAbstract
 
@@ -39,8 +37,15 @@ class AbstractOST(PredictAbstract):
         Return the score given metric.
         """
         os.makedirs("tmp", exist_ok=True)
-        metrics = [metrics] if isinstance(metrics, str) else metrics
-        command = COMMAND.replace("$NATIVE_PATH", native_path).replace("$PRED_PATH", pred_path)
+        metrics = [metrics] if isinstance(metrics, str) else metrics  # type: ignore
+        command = COMMAND.replace("$NATIVE_PATH", native_path).replace(
+            "$PRED_PATH", pred_path
+        )
         command += "".join(f" --{m}" for m in metrics)
-        subprocess.run(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(
+            command,
+            shell=True,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,  # nosec
+        )
         return AbstractOST._get_metric_from_json(metrics)

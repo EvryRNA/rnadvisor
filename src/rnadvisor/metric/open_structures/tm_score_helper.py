@@ -1,10 +1,10 @@
-from typing import Tuple, Dict, Optional
+from typing import Dict, Optional, Tuple
 
-from rnadvisor.utils.utils import time_it
 from rnadvisor.cli_runner import build_predict_cli
-from rnadvisor.predict_abstract import PredictAbstract
-
 from rnadvisor.metric.open_structures.abstract_ost import AbstractOST
+from rnadvisor.predict_abstract import PredictAbstract
+from rnadvisor.utils.utils import time_it
+
 
 class TMScoreHelper(PredictAbstract):
     """
@@ -12,11 +12,11 @@ class TMScoreHelper(PredictAbstract):
     """
 
     def __init__(self, *args, **kwargs):
-        super(TMScoreHelper, self).__init__(name = "tm-score-ost",*args, **kwargs)
+        super(TMScoreHelper, self).__init__(name="tm-score-ost", *args, **kwargs)
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the TM-score for a single prediction.
@@ -24,7 +24,7 @@ class TMScoreHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: the TM-score
         """
-        tm_score = self.compute_tm_score(pred_path, native_path)
+        tm_score = self.compute_tm_score(pred_path, native_path)  # type: ignore
         return {"TM-score (OST)": tm_score[0]}  # type: ignore
 
     @staticmethod
@@ -35,7 +35,8 @@ class TMScoreHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: the TM-score for the prediction.
         """
-        return AbstractOST.get_metric(pred_path, native_path, ["tm-score"])
+        return AbstractOST.get_metric(pred_path, native_path, ["tm-score"])  # type: ignore
+
 
 main = build_predict_cli(TMScoreHelper)
 

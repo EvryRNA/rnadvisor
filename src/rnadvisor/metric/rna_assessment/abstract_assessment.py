@@ -3,11 +3,12 @@ Class that get and convert the pdb files to structures encoded by RNA-tools.
 """
 
 import os
-from typing import Dict, Optional, Tuple
+from typing import Dict, Optional, Tuple, no_type_check
 
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
 
 from rnadvisor.predict_abstract import PredictAbstract
+
 
 class AbstractAssessment(PredictAbstract):
     def __init__(self, mc_annotate_bin: Optional[str] = None, *args, **kwargs):
@@ -39,7 +40,10 @@ class AbstractAssessment(PredictAbstract):
         :param mc_annotate_bin: path to the binary MC-Annotate file. Default in `config.py` file.
         :return: two instances of PDBStruct for the native and prediction structures
         """
-        native_struc, pred_struc = PDBStruct(mc_annotate_bin), PDBStruct(mc_annotate_bin)
+        native_struc, pred_struc = (
+            PDBStruct(mc_annotate_bin),
+            PDBStruct(mc_annotate_bin),
+        )
         native_struc.load(native_path, native_index)
         pred_struc.load(pred_path, prediction_index)
         return native_struc, pred_struc
@@ -55,9 +59,10 @@ class AbstractAssessment(PredictAbstract):
         """
         raise NotImplementedError
 
+    @no_type_check
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
-        ) -> Tuple[Dict, Dict]:
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
+    ) -> Tuple[Dict, Dict]:
         """
         Compute a give score from the prediction and a native structure
         :param pred_path: the path to the .pdb file of a prediction.
@@ -65,6 +70,8 @@ class AbstractAssessment(PredictAbstract):
         :return:
         """
         native_struc, pred_struc = self.convert_pdb_to_structure(
-            pred_path, native_path, mc_annotate_bin=self.mc_annotate_bin
+            pred_path,
+            native_path,
+            mc_annotate_bin=self.mc_annotate_bin,
         )
         return self._compute_from_structure(native_struc, pred_struc)

@@ -12,23 +12,22 @@ J. Computational Biology, in press (2019).
 """
 
 import os
-import subprocess
+import subprocess  # nosec
 from typing import Dict, Optional, Tuple
 
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
-
 from rnadvisor.utils.utils import time_it
 
 
 class DfireHelper(PredictAbstract):
     def __init__(self, dfire_bin_path: Optional[str] = None, *args, **kwargs):
-        super(DfireHelper, self).__init__(name="dfire", *args, **kwargs)
+        super(DfireHelper, self).__init__(name="dfire", *args, **kwargs)  # type: ignore
         self.dfire_bin_path = dfire_bin_path
 
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Compute the dfire score
@@ -53,10 +52,11 @@ class DfireHelper(PredictAbstract):
             else os.path.join("lib", "dfire", "bin", "DFIRE_RNA")
         )
         command = f"{dfire_bin_path} {pred_path}"
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         dfire = output.decode().replace("\n", "").split()[-1]
         dfire = round(float(dfire), 3)  # type: ignore
         return dfire  # type: ignore
+
 
 main = build_predict_cli(DfireHelper)
 

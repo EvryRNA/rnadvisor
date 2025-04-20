@@ -11,21 +11,18 @@ convolutional neural networks.
 PLoS Comput Biol. 2018 Nov 27;14(11):e1006514.
 doi: 10.1371/journal.pcbi.1006514. PMID: 30481171; PMCID: PMC6258470.
 """
-from typing import Optional, Tuple, Dict
-import tensorflow as tf
 
-from Main import load_CNN_model, preprocess_input
-from Bio.PDB.PDBParser import PDBParser
+from typing import Dict, Optional, Tuple
+
 import numpy as np
-
+import tensorflow as tf
+from Bio.PDB.PDBParser import PDBParser
+from Main import load_CNN_model, preprocess_input
 from ModifyName import modify_residue_atom_name
 from PixelateResidue import NBINS, pixelate_atoms_in_box
 
-
-
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
-
 from rnadvisor.utils.utils import fn_time
 
 
@@ -35,9 +32,14 @@ class RNA3DCNNHelper(PredictAbstract):
     """
 
     def __init__(self, *args, **kwargs):
-        super(RNA3DCNNHelper, self).__init__(name="rna3dcnn",*args, **kwargs)
-        self.model_paths = {"RNA3DCNN-MD" : "RNA3DCNN_MD.hdf5", "RNA3DCNN-MDMC": "RNA3DCNN_MDMC.hdf5"}
-        self.models = {key: load_CNN_model(value) for key, value in self.model_paths.items()}
+        super(RNA3DCNNHelper, self).__init__(name="rna3dcnn", *args, **kwargs)
+        self.model_paths = {
+            "RNA3DCNN-MD": "RNA3DCNN_MD.hdf5",
+            "RNA3DCNN-MDMC": "RNA3DCNN_MDMC.hdf5",
+        }
+        self.models = {
+            key: load_CNN_model(value) for key, value in self.model_paths.items()
+        }
 
     def predict_rna(self, rna_path: str, model_name: str) -> float:
         """
@@ -59,12 +61,12 @@ class RNA3DCNNHelper(PredictAbstract):
         try:
             score_residue = model.predict(pixels)
             score = np.sum(score_residue)
-        except tf.errors.InvalidArgumentError as e:
+        except tf.errors.InvalidArgumentError:
             score = np.nan
         return score
 
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         out_scores, out_times = {}, {}
         for model_name in self.models.keys():
@@ -76,6 +78,7 @@ class RNA3DCNNHelper(PredictAbstract):
             out_scores[model_name] = score
             out_times[model_name] = c_time
         return out_scores, out_times
+
 
 main = build_predict_cli(RNA3DCNNHelper)
 

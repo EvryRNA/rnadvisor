@@ -18,12 +18,10 @@ from lib.rna_assessment.RNA_normalizer.structures.pdb_comparer import PDBCompare
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
 from loguru import logger
 
-
+from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.metric.rna_assessment.abstract_assessment import AbstractAssessment
 from rnadvisor.metric.rna_assessment.rmsd_helper import RMSDHelper
 from rnadvisor.utils.utils import time_it
-
-from rnadvisor.cli_runner import build_predict_cli
 
 
 class PValueHelper(AbstractAssessment):
@@ -50,7 +48,9 @@ class PValueHelper(AbstractAssessment):
         :param pred_struc: predicted structure in a PDBStruc instance
         :return: a score from these structures
         """
-        pvalue = self.compute_p_value_from_structures(native_struc, pred_struc, self.p_value_param)
+        pvalue = self.compute_p_value_from_structures(
+            native_struc, pred_struc, self.p_value_param
+        )
         return {"P-VALUE": pvalue}  # type: ignore
 
     @staticmethod
@@ -114,6 +114,7 @@ class PValueHelper(AbstractAssessment):
             )
         pvalue = comparer.pvalue(rmsd, len(raw_native_struc), p_value_param)
         return pvalue
+
 
 main = build_predict_cli(PValueHelper)
 

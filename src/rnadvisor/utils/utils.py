@@ -1,9 +1,16 @@
 import sys
 import time
+from typing import Any, List, Tuple
+
 from loguru import logger
-from typing import Tuple, Any, List
 from tqdm import tqdm
-from rna_tools.rna_tools_lib import RNAStructure, add_header
+
+try:
+    from Bio.PDB import PDBIO, MMCIFParser  # type: ignore
+    from rna_tools.rna_tools_lib import RNAStructure, add_header  # type: ignore
+except ImportError:
+    RNAStructure = None
+    add_header = None
 
 from rnadvisor.enums.list_dockers import ALL, ALL_METRICS, ALL_SF, SERVICES
 
@@ -18,6 +25,7 @@ def time_it(func):
         return result, time_result
 
     return wrapper
+
 
 def fn_time(func, *args, **kwargs) -> Tuple[Any, float]:
     start_time = time.time()
@@ -37,6 +45,7 @@ def read_txt_file(in_path: str) -> List[str]:
         lines = f.readlines()
     return [line.strip() for line in lines]
 
+
 def write_to_txt_file(out_path: str, lines: List[str]) -> None:
     """
     Write a list of lines to a txt file
@@ -47,11 +56,14 @@ def write_to_txt_file(out_path: str, lines: List[str]) -> None:
         for line in lines:
             f.write(line + "\n")
 
+
 class TqdmCompatibleHandler:
     def write(self, message):
         tqdm.write(message.strip())
+
     def flush(self):
         pass
+
 
 def init_logger(verbosity: int = 1):
     """
@@ -68,7 +80,7 @@ def init_logger(verbosity: int = 1):
 
     handler = sys.stderr if verbosity == 2 else TqdmCompatibleHandler()
 
-    logger.add(
+    logger.add(  # type: ignore
         handler,
         level=level,
         filter=filter_fn,
@@ -77,10 +89,11 @@ def init_logger(verbosity: int = 1):
         diagnose=True,
         enqueue=True,
         format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | "
-               "<level>{level:<8}</level> | "
-               "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
-               "<level>{message}</level>"
+        "<level>{level:<8}</level> | "
+        "<cyan>{name}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> - "
+        "<level>{message}</level>",
     )
+
 
 def check_scores(scores: List[str]) -> List[str]:
     """
@@ -90,7 +103,9 @@ def check_scores(scores: List[str]) -> List[str]:
     """
     expanded_scores = []
     for score in scores:
-        score_lower = score.lower()
+        score_lower = (
+            score.lower().replace("escore", "barnaba").replace("ermsd", "barnaba")
+        )
         if score_lower == "all":
             expanded_scores.extend(ALL)
         elif score_lower == "metrics":
@@ -111,10 +126,11 @@ def save_pdb_rna_tools(structure: Any, out_path: str):
     :param out_path: path where to save the structure
     """
     output = ""
-    output += add_header("") + '\n'
-    output += structure.get_text() + '\n'
-    with open(out_path, 'w') as fio:
+    output += add_header("") + "\n"
+    output += structure.get_text() + "\n"
+    with open(out_path, "w") as fio:
         fio.write(output)
+
 
 def clean_structure_rna_tools(in_path: str, out_path: str):
     """
@@ -126,3 +142,37 @@ def clean_structure_rna_tools(in_path: str, out_path: str):
     structure = RNAStructure(in_path)
     structure.get_rnapuzzle_ready(verbose=False)
     save_pdb_rna_tools(structure, out_path)
+
+
+def convert_cif_to_pdb(in_cif: str, out_pdb: str):
+    """
+    Convert a .cif file to a .pdb file, handling multiple chains and chain ID limits.
+    :param in_cif: Path to the input .cif file
+    :param out_pdb: Path to save the output .pdb file
+    """
+    try:
+        parser = MMCIFParser(QUIET=True)
+        structure = parser.get_structure("my_structure", in_cif)
+        used_chain_ids = set()
+        remap_chain_ids = {}
+        # Handle chain IDs
+        for model in structure:
+            for chain in model:
+                original_id = chain.id
+                if len(original_id) > 1 or original_id in used_chain_ids:
+                    # Generate a new chain ID
+                    for new_id in "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789":
+                        if new_id not in used_chain_ids:
+                            remap_chain_ids[original_id] = new_id
+                            chain.id = new_id
+                            used_chain_ids.add(new_id)
+                            break
+                    else:
+                        raise ValueError("Too many chains to fit in PDB format!")
+                else:
+                    used_chain_ids.add(original_id)
+        io = PDBIO()
+        io.set_structure(structure)
+        io.save(out_pdb)
+    except Exception as e:
+        print(f"Error during conversion: {e}")

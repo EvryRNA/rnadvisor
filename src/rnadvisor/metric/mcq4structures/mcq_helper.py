@@ -10,23 +10,27 @@ https://doi.org/10.1007/s10100-013-0296-5
 """
 
 import os
-import subprocess
-from typing import Dict, Optional, Tuple
+import subprocess  # nosec
+from typing import Dict, Optional, Tuple, no_type_check
 
 import numpy as np
 
-from rnadvisor.utils.utils import time_it
 from rnadvisor.cli_runner import build_predict_cli
 from rnadvisor.predict_abstract import PredictAbstract
+from rnadvisor.utils.utils import time_it
+
 
 class MCQHelper(PredictAbstract):
     def __init__(self, mcq_bin_path: Optional[str] = None, *args, **kwargs):
-        super(MCQHelper, self).__init__(name = "mcq", *args, **kwargs)
+        super(MCQHelper, self).__init__(name="mcq", *args, **kwargs)  # type: ignore
         self.mcq_bin_path = mcq_bin_path
 
     @staticmethod
     def compute_mcq(
-        pred_path: str, native_path: str, mcq_bin_path: Optional[str] = None, mcq_mode: int = 2
+        pred_path: str,
+        native_path: str,
+        mcq_bin_path: Optional[str] = None,
+        mcq_mode: int = 2,
     ) -> float:
         """
         Compute the MCQ Score (using the mcq-local of the mcq4structures code)
@@ -47,16 +51,22 @@ class MCQHelper(PredictAbstract):
             f"{mcq_bin_path} -r {mcq_mode} -t {native_path} -d tmp {pred_path}"
             + " | awk '{print $NF}' 2> /dev/null"
         )
-        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)
+        output = subprocess.check_output(command, shell=True, stderr=subprocess.DEVNULL)  # nosec
         try:
             mcq_score = float(str(output.decode()).replace("\n", ""))
         except ValueError:
             mcq_score = np.nan
         return mcq_score
 
+    @no_type_check
     @time_it
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, mcq_mode: int = 2, *args, **kwargs
+        self,
+        native_path: Optional[str],
+        pred_path: str,
+        mcq_mode: int = 2,
+        *args,
+        **kwargs,
     ) -> Tuple[Dict, Dict]:
         """
         Compute the MCQ score for a given prediction and the native .pdb path.
@@ -66,8 +76,14 @@ class MCQHelper(PredictAbstract):
             and 2: compare everythinig regardless of the violations)
         :return: dictionary with the MCQ score for the given inputs
         """
-        mcq_score = self.compute_mcq(pred_path, native_path, self.mcq_bin_path, mcq_mode)
-        return {"MCQ": mcq_score}  # type: ignore
+        mcq_score = self.compute_mcq(
+            pred_path,
+            native_path,
+            self.mcq_bin_path,
+            mcq_mode,
+        )
+        return {"MCQ": mcq_score}
+
 
 main = build_predict_cli(MCQHelper)
 

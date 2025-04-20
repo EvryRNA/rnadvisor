@@ -25,4 +25,4 @@ COPY data/example /app/data/example
 RUN find /usr/local/lib/python3.8/site-packages/ -name '*nspkg.pth' -exec rm -v {} +
 
 ENTRYPOINT ["python", "-m", "rnadvisor.metric.barnaba.barnaba_helper"]
-CMD ["--pred_dir=data/example/PREDS", "--native_dir=data.example/NATIVE/R1107.pdb"]
+CMD ["--pred_dir=data/example/PREDS", "--native_path=data/example/NATIVE/R1107.pdb"]

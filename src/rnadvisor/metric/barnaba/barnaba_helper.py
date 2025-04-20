@@ -10,22 +10,20 @@ Bottaro, Sandro, Francesco Di Palma, and Giovanni Bussi.
 Nucleic acids research 42.21 (2014): 13306-13314.
 """
 
-from typing import Dict, Tuple, Optional
+from typing import Dict, Optional, Tuple
 
 import lib.barnaba.barnaba as bb
 import numpy as np
 from lib.barnaba.barnaba import escore
 
-from rnadvisor.predict_abstract import PredictAbstract
-
-from rnadvisor.utils.utils import fn_time
-
 from rnadvisor.cli_runner import build_predict_cli
+from rnadvisor.predict_abstract import PredictAbstract
+from rnadvisor.utils.utils import fn_time
 
 
 class BarnabaHelper(PredictAbstract):
     def __init__(self, *args, **kwargs):
-        super(BarnabaHelper, self).__init__(name="barnaba",*args, **kwargs)
+        super(BarnabaHelper, self).__init__(name="barnaba", *args, **kwargs)
 
     @staticmethod
     def compute_rmsd(
@@ -74,13 +72,13 @@ class BarnabaHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: the eScore
         """
-        e_score_fit = escore.Escore([native_path])
+        e_score_fit = escore.Escore([pred_path])
         pred_escore = e_score_fit.score(pred_path)[0]
         pred_escore = round(pred_escore, 3)
         return pred_escore
 
     def predict_single_file(
-            self, native_path: Optional[str], pred_path: str, *args, **kwargs
+        self, native_path: Optional[str], pred_path: str, *args, **kwargs
     ) -> Tuple[Dict, Dict]:
         """
         Return the RMSD, eRMSD and eScore from baRNAba implementation
@@ -88,16 +86,33 @@ class BarnabaHelper(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return: a dictionary with the 3 scores
         """
-        rmsd, rmsd_time = fn_time(self.compute_rmsd, pred_path, native_path)
-        ermsd, ermsd_time = fn_time(self.compute_ermsd, pred_path, native_path)
+        rmsd, rmsd_time = (
+            fn_time(self.compute_rmsd, pred_path, native_path)
+            if native_path
+            else (None, None)
+        )
+        ermsd, ermsd_time = (
+            fn_time(self.compute_ermsd, pred_path, native_path)
+            if native_path
+            else (None, None)
+        )
         e_score, e_score_time = fn_time(self.compute_escore, pred_path, native_path)
-        scores = {"BARNABA-RMSD": rmsd, "BARNABA-eRMSD": ermsd, "BARNABA-eSCORE": e_score}
+        scores = {
+            "BARNABA-eSCORE": e_score,
+        }
         times = {
-            "BARNABA-RMSD": rmsd_time,
-            "BARNABA-eRMSD": ermsd_time,
             "BARNABA-eSCORE": e_score_time,
         }
+        if rmsd is not None:
+            scores.update({"BARNABA-RMSD": rmsd, "BARNABA-eRMSD": ermsd})
+            times.update(
+                {
+                    "BARNABA-RMSD": rmsd_time,  # type: ignore
+                    "BARNABA-eRMSD": ermsd_time,  # type: ignore
+                }
+            )
         return scores, times
+
 
 main = build_predict_cli(BarnabaHelper)
 
