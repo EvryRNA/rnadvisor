@@ -23,3 +23,5 @@ models
 .DS_Store
 slim.report.json
 Makefile
+!data/example
+!data/tmp

@@ -142,6 +142,35 @@ To get the `slim` version, you can run the following command:
 just build-<name>-slim
 ```
 
+If you want to run the different scoring function directly, you can run the following command:
+
+```bash
+docker run -it --rm -v sayby77/rnadvisor-<name>-slim
+````
+It will run the evaluation on the different examples.
+If you want to run the evaluation on your own data, you can mount your data in the container using the `-v` option.
+For example, if you have a folder `data/tmp/input` with your predictions and native structure, and you want to save the output in 
+`data/tmp/output/out.csv`, you can mount the `data/tmp` folder in the container using the following command:
+
+```bash
+docker run -it --rm -v ${PWD}/data/tmp/:/app/data/tmp/ sayby77/rnadvisor-<name>-slim --pred_dir data/tmp/input --native_path data/tmp/input/R1107.pdb --out_path data/tmp/output/out.csv
+```
+
+Please note that the `rnadvisor` command line handles the mounting of the data for you, so you don't need to do it manually.
+
+
+## Folder structure
+
+The structure of the repo is the following:
+- `data`: examples of structures to be evaluated.
+- `dockerfiles`: each dockerfile for each individual scoring function/metric.
+- `img`: images used in the README file.
+- `licenses`: licenses of the different repositories used in the project.
+- `requirements`: requirements for the different docker images.
+- `src/rnadvisor`: the source code of the RNAdvisor tool, as well as for the wrapper for each metric/scoring function.
+- `tasks`: justfile tasks to build the docker images.
+- `tests`: tests for the different scoring functions/metrics.
+
 ## Citation 
 ```
 Clement Bernard, Guillaume Postic, Sahar Ghannay, Fariza Tahi,
