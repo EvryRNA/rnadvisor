@@ -944,7 +944,7 @@ wheels = [
 
 [[package]]
 name = "rnadvisor"
-version = "2.1.3"
+version = "2.1.6"
 source = { editable = "." }
 dependencies = [
     { name = "biopython", version = "1.83", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },

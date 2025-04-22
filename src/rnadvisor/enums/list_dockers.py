@@ -23,7 +23,7 @@ SERVICES = [
     "cad-score",
     "ares",
     # "rna3dcnn",
-    # "rna-briq",
+    "rna-briq",
 ]
 ALL = SERVICES
 ALL_METRICS = [
@@ -80,4 +80,5 @@ DESCENDING_SF = [
     "RASP-ENERGY",
     "rsRNASP",
     "ARES",
+    "RNA-BRiQ",
 ]

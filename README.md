@@ -54,9 +54,10 @@ with:
   --native_path         Path to a .pdb file of the native structure.
   --scores              List of the scores to use, separated by a comma. 
                         If you want to use them all, use `all`. To use all the metrics, use `metrics`
-                        To use all the scoring functions, use `sf`.
+                        To use all the scoring functions, use `sf` (it does not include `rna-briq` as it is very
+                        slow to compute).
                         Choice between clash,pamnet,lociparse,3drnascore,tb-mcq,barnaba,cgrnasp,dfire,mcq,
-                        lcs,cad-score,tm-score,lddt,rasp,rs-rnasp,rmsd,inf,p-value,di,gdt-ts,ares
+                        lcs,cad-score,tm-score,lddt,rasp,rs-rnasp,rmsd,inf,p-value,di,gdt-ts,ares,rna-briq.
   --out_path            Path to a .csv file where to save the predictions.
   --out_time_path       Path to a .csv file where to save the time of the predictions for each score.
   --sort_by             Metric to sort the results by.
@@ -97,6 +98,7 @@ It uses the following repositories:
 - [LociPARSE](https://github.com/Bhattacharya-Lab/lociPARSE): official python implementation of LociPARSE.
 - [RNA3DCNN](https://github.com/lijunRNA/RNA3DCNN): official python implementation of RNA3DCNN. I have reduced to a docker image that only works with GPU.
 - [3dRNAScore](http://biophy.hust.edu.cn/new/resources/3dRNAscore): C++ official implementation of the 3dRNAScore.
+- [RNA-BRiQ](https://github.com/Jian-Zhan/RNA-BRiQ): official C++ implementation of RNA-BRiQ. I got code from Thomasz Zok to extract the necessary files to run the scoring function. Please note that the building will not work as is requires to download a data file from the website. We advise to use the published docker image.
 
 Note that all these repositories are implementing a lot of different functions. 
 For the sake of this project, I just took what seemed to be the most relevant for the scoring of 3D structures. 

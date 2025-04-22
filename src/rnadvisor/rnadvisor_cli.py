@@ -119,9 +119,10 @@ class RNAdvisorCLI:
                 Bio.PDB.PDBExceptions.PDBConstructionException,
                 KeyError,
                 UnboundLocalError,
-            ):
+                IsADirectoryError,
+            ) as e:
                 logger.warning(
-                    f"Error cleaning {native_path}. Copying the original file."
+                    f"Error cleaning {native_path}: {e}. Copying the original file."
                 )
         if pred_dir is not None:
             if os.path.isfile(pred_dir):
