@@ -1,4 +1,3 @@
-![img](img/RNAdvisor_page.gif)
 
 <div align="center">
 
