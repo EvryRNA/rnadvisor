@@ -34,13 +34,30 @@ def check_docker_compose():
         sys.exit(1)
 
 
+def ensure_docker_network(name="rnadvisor_shared_net"):
+    result = subprocess.run(["docker", "network", "ls", "--format", "{{.Name}}"],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        raise RuntimeError("❌ Failed to list Docker networks. Is Docker running?")
+    if name not in result.stdout.splitlines():
+        subprocess.run(["docker", "network", "create", name], check=True)
+
+
 def run_services_docker(services: Dict, volumes: Dict, verbose: int, dc_tmp_path: str):
     """
     Launch docker compose up for the services defined in the compose file.
     Skips any services whose images cannot be found.
     """
-    compose_dict = {"version": "3.9", "services": {}}
-
+    ensure_docker_network()
+    compose_dict = {
+        "services": {},
+        "networks": {
+            "rnadvisor_net": {
+                "name": "rnadvisor_shared_net",
+                "external": True
+            }
+        }
+    }
     for service, config in services.items():
         image = f"sayby77/rnadvisor-{service}-slim"
         args = config.get("args", {})
@@ -62,6 +79,7 @@ def run_services_docker(services: Dict, volumes: Dict, verbose: int, dc_tmp_path
             "restart": "no",
             "platform": "linux/amd64",
             "volumes": volume_mounts,
+            "networks": ["rnadvisor_net"],
         }
 
     if not compose_dict["services"]:
