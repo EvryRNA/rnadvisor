@@ -5,6 +5,7 @@ Class that get and convert the pdb files to structures encoded by RNA-tools.
 import os
 from typing import Dict, Optional, Tuple, no_type_check
 
+import numpy as np
 from lib.rna_assessment.RNA_normalizer.structures.pdb_struct import PDBStruct
 
 from rnadvisor.predict_abstract import PredictAbstract
@@ -69,9 +70,12 @@ class AbstractAssessment(PredictAbstract):
         :param native_path: the path to the .pdb file of the native structure.
         :return:
         """
-        native_struc, pred_struc = self.convert_pdb_to_structure(
-            pred_path,
-            native_path,
-            mc_annotate_bin=self.mc_annotate_bin,
-        )
+        try:
+            native_struc, pred_struc = self.convert_pdb_to_structure(
+                pred_path,
+                native_path,
+                mc_annotate_bin=self.mc_annotate_bin,
+            )
+        except (ValueError, KeyError):
+            return {self.name: np.nan}, {self.name: np.nan}
         return self._compute_from_structure(native_struc, pred_struc)

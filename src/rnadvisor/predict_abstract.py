@@ -176,7 +176,9 @@ class PredictAbstract:
                 score_key, score_val = list(c_scores.items())[0]
                 if score_val is not None:
                     # Got error with RMSD sometimes
-                    pbar.set_postfix({"file": short_path, score_key: f"{score_val:.4f}"})
+                    pbar.set_postfix(
+                        {"file": short_path, score_key: f"{score_val:.4f}"}
+                    )
         self.save_df(scores, times, out_path, out_time_path)
 
     def save_df(

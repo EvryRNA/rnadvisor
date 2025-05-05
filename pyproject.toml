@@ -1,6 +1,6 @@
 [project]
 name = "rnadvisor"
-version = "2.1.6"
+version = "2.1.8"
 description = "RNAdvisor is a wrapper tool to compute RNA 3D structure quality assessment."
 readme = "README.md"
 authors = [
