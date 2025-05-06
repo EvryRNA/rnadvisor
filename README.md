@@ -122,7 +122,8 @@ You can find each of them in dockerhub with: `sayby/rnadvisor-<name>-slim` or `s
 | `dfire`          | `lddt`      |
 | `rasp`           | `tm-score`  |
 | `rsRNASP`        | `cad-score` |
-| `ares`            | `clash`         |
+| `ares`           | `clash`     |
+| `rna-briq`       | `lcs`       |
 
 
 The `slim` version is a smaller version of the container that only contains the necessary codes to run the scoring function (e.g. no bash, no other commands, etc.).
